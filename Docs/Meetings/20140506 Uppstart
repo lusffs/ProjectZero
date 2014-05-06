@@ -1,0 +1,59 @@
+2014-05-06
+Dags att gå indie?
+---
+Uppstartsmöte.
+
+Närvarande: Strid, Elias, Patrik, John, Conrad, Erik
+---
+
+# Project Zero
+
+# Vad vi vill bygga
+- Tanken är att bygga någonting som är på en LITE högre nivå än Pong, men inte mycket.. 
+- Någonting enkelt för att vi inte ska fastna och tröttna
+
+# Spelidé
+- Tower Defence
+	- Karta definierad i textfil, grid
+	- Torn, range (fixed direction, damage)
+	- Fiend (HP, velocity, path finding)
+	- Grafik (Bakgrund, entities, animationer)
+	- Ljud (FX, bakgrund)
+	- Win/Loss-regler 
+	- "Byggfas"
+	- Ekonomi
+	- Poäng (1 per fiende, nivåbonus?)
+	- Nivåer
+
+# Tekniker
+- Vi säger nej till Java!
+- MonoGame? Det verkar folk gilla! .NET/C#
+
+# Erfarenheter i teamet:
+- Elias har erfarenhet att 3DProg i Erlang. Koolt. C# och XNA i sammanhanget är en parantes. Hehe.
+- Strid kan allt, inkl implementera Internet i Minecraft. No questions asked.
+- Conrad har byggt spel, inkl fiskespel. Vet allt om spel.
+- Patrik skrivit Pong i javascript, gillar spel och att scripta lua i MineCraft. 
+- John ingen, men spelar ibland "jag kan kalla mig själv väldigt oerfaren"
+- Erik har typ ingen erfarenhet. 3D-modeller för 10 år sen. Nu? Oklart.. 
+
+# Beslut:
+- Vi kör på MonoGame!
+- GitHub, öppet, fram till att vi har någonting att konkurrera med 
+	- Bok som heter ProGit kanske kan hjälpa oss
+
+# Actions: 
+- Git-repo (fixat av Conrad, ProjectZero)
+- Pusha MonoGame-grund till repot (Strid)
+- Folk drar ner repot
+- Läsa saker!
+- Beslut om kommunikationsmedium
+
+# Roller:
+- John: All-around med betoning på koppling grafik och logik
+- Strid: "Systemgrejer", bygga stomme
+- Patrik: Datamodell för spelet. Karta, entiteter, etc
+- Conrad: UI, bilder, karta, ljud, "sitta hemma och spela in fisar"
+- Erik: Path-finding
+- Elias: erlang
+

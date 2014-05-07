@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -14,7 +15,8 @@ namespace ProjectZero
         public ProjectZeroGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+            //Content.RootDirectory = "Content";
+            Content.RootDirectory = "";
         }
 
         /// <summary>
@@ -30,6 +32,9 @@ namespace ProjectZero
             base.Initialize();
         }
 
+        Texture2D _test = null;
+        Texture2D _slime = null;
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -39,7 +44,11 @@ namespace ProjectZero
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //Content.L
+            _test = Content.Load<Texture2D>("test");
+            using (var s = File.OpenRead("Slime.png"))
+            {
+                _slime = Texture2D.FromStream(GraphicsDevice, s);
+            }
         }
 
         /// <summary>
@@ -70,6 +79,11 @@ namespace ProjectZero
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+            spriteBatch.Draw(_test, new Rectangle(0, 0, 200, 200), Color.White);
+            spriteBatch.Draw(_slime, new Vector2(0, 250), Color.White);
+            spriteBatch.End();
 
             // TODO: Add your drawing code here
 

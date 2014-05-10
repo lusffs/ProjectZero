@@ -1,6 +1,7 @@
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZero.Renderer;
 
 namespace ProjectZero
 {
@@ -9,14 +10,12 @@ namespace ProjectZero
     /// </summary>
     public class ProjectZeroGame : Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private Renderer.Renderer _renderer;
 
         public ProjectZeroGame()
         {
-            graphics = new GraphicsDeviceManager(this);
-            //Content.RootDirectory = "Content";
             Content.RootDirectory = "";
+            _renderer = new Renderer.Renderer(new GraphicsDeviceManager(this), Content);
         }
 
         /// <summary>
@@ -32,24 +31,19 @@ namespace ProjectZero
             base.Initialize();
         }
 
-        Texture2D _test = null;
-        Texture2D _slime = null;
-
+        
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            slimeImage = _renderer.RegisterTexture2D("Slime.png");
 
-            _test = Content.Load<Texture2D>("test");
-            using (var s = File.OpenRead("Slime.png"))
-            {
-                _slime = Texture2D.FromStream(GraphicsDevice, s);
-            }
+            _renderer.LoadContent(GraphicsDevice);
         }
+
+        TextureHandle slimeImage;
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -58,6 +52,7 @@ namespace ProjectZero
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            _renderer.UnloadContent();
         }
 
         /// <summary>
@@ -67,7 +62,9 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // TODO: Add your update logic here
+            _renderer.ClearScreen(Color.AliceBlue);
+
+            _renderer.DrawImage(slimeImage, new Vector2(100, 100));
 
             base.Update(gameTime);
         }
@@ -78,14 +75,7 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
-            spriteBatch.Draw(_test, new Rectangle(0, 0, 200, 200), Color.White);
-            spriteBatch.Draw(_slime, new Vector2(0, 250), Color.White);
-            spriteBatch.End();
-
-            // TODO: Add your drawing code here
+            _renderer.RenderToScreen(gameTime);
 
             base.Draw(gameTime);
         }

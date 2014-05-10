@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ProjectZero.Renderer
+namespace ProjectZero.RenderSystem
 {
     public abstract class TextureHandle
     {

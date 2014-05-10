@@ -1,7 +1,9 @@
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ProjectZero.Renderer;
+using XnaInput = Microsoft.Xna.Framework.Input;
+using ProjectZero.InputSystem;
+using ProjectZero.RenderSystem;
 
 namespace ProjectZero
 {
@@ -10,12 +12,16 @@ namespace ProjectZero
     /// </summary>
     public class ProjectZeroGame : Game
     {
-        private Renderer.Renderer _renderer;
+        private Renderer _renderer;
+        private Input _input;
+        private GameSystem.Game _game;
 
         public ProjectZeroGame()
         {
-            Content.RootDirectory = "";
-            _renderer = new Renderer.Renderer(new GraphicsDeviceManager(this), Content);
+            Content.RootDirectory = "Content";
+            _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
+            _input = new Input();
+            _game = new GameSystem.Game(_renderer, _input);
         }
 
         /// <summary>
@@ -26,8 +32,7 @@ namespace ProjectZero
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            _game.Initialize();
             base.Initialize();
         }
 
@@ -38,12 +43,10 @@ namespace ProjectZero
         /// </summary>
         protected override void LoadContent()
         {
-            slimeImage = _renderer.RegisterTexture2D("Slime.png");
-
+            _game.RegisterContent();
+            // this will actually load content.
             _renderer.LoadContent(GraphicsDevice);
         }
-
-        TextureHandle slimeImage;
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -62,9 +65,10 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            _renderer.ClearScreen(Color.AliceBlue);
-
-            _renderer.DrawImage(slimeImage, new Vector2(100, 100));
+            // collect all input and handle it.
+            _input.Frame(XnaInput.Keyboard.GetState(), XnaInput.Mouse.GetState());
+            // run game frame for updating game state and generate new output.
+            _game.Frame(gameTime);
 
             base.Update(gameTime);
         }

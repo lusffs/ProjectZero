@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using XnaInput = Microsoft.Xna.Framework.Input;
 using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
+using ProjectZero.SoundSystem;
 
 namespace ProjectZero
 {
@@ -13,6 +14,7 @@ namespace ProjectZero
     public class ProjectZeroGame : Game
     {
         private Renderer _renderer;
+        private SoundRenderer _soundRenderer;
         private Input _input;
         private GameSystem.Game _game;
 
@@ -20,8 +22,9 @@ namespace ProjectZero
         {
             Content.RootDirectory = "Content";
             _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
+            _soundRenderer = new SoundRenderer();
             _input = new Input();
-            _game = new GameSystem.Game(_renderer, _input);
+            _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
         }
 
         /// <summary>
@@ -46,6 +49,7 @@ namespace ProjectZero
             _game.RegisterContent();
             // this will actually load content.
             _renderer.LoadContent(GraphicsDevice);
+            _soundRenderer.LoadContent();
         }
 
         /// <summary>
@@ -56,6 +60,7 @@ namespace ProjectZero
         {
             // TODO: Unload any non ContentManager content here
             _renderer.UnloadContent();
+            _soundRenderer.UnloadContent();
         }
 
         /// <summary>
@@ -79,6 +84,7 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            _soundRenderer.Render(gameTime);
             _renderer.RenderToScreen(gameTime);
 
             base.Draw(gameTime);

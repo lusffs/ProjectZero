@@ -7,19 +7,22 @@ using Microsoft.Xna.Framework;
 using XnaInput = Microsoft.Xna.Framework.Input;
 using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
+using ProjectZero.SoundSystem;
 
 namespace ProjectZero.GameSystem
 {
     public class Game
     {
         private readonly Renderer _renderer;
+        private readonly SoundRenderer _soundRenderer;
         private readonly Input _input;
 
         private GameTime _gameTime = new GameTime();
 
-        public Game(Renderer renderer, Input input)
+        public Game(Renderer renderer, SoundRenderer soundRenderer, Input input)
         {
             _renderer = renderer;
+            _soundRenderer = soundRenderer;
             _input = input;
 
             _input.KeyEventHandler += KeyHandle;

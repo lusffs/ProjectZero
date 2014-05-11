@@ -97,7 +97,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\images\tower.png" />
-    <Content Include="Content\images\ui\cursor.png" />
+    <Content Include="Content\images\ui\cursor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SDL.dll" />
     <Content Include="Content\images\slime.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

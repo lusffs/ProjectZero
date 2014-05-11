@@ -35,12 +35,16 @@ namespace ProjectZero.GameSystem
             var r = new Random();
             slimeXTest = 50 + r.Next(150);
             slimeYTest = 50 + r.Next(150);
+            mousePosition = new Point(0, 0);
         }
 
         TextureHandle slimeImageTest;
         float slimeXTest, slimeYTest;
 
         FontHandle fontTest;
+
+        TextureHandle mousePointerTest;
+        Point mousePosition;
 
         SoundHandle soundTest;
 
@@ -49,6 +53,7 @@ namespace ProjectZero.GameSystem
             // register any content here through sub systems.
             slimeImageTest = _renderer.RegisterTexture2D("images/slime.png");
             fontTest = _renderer.RegisterFont("fonts/console");
+            mousePointerTest = _renderer.RegisterTexture2D("images/ui/cursor.png");
 
             soundTest = _soundRenderer.RegisterSound("sound/plong.wav");
         }
@@ -75,12 +80,17 @@ namespace ProjectZero.GameSystem
 
             _renderer.DrawImage(slimeImageTest, new Vector2(10, 10), 50, 50);
 
+            _renderer.DrawString(fontTest, "Hello World!!!", new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
+         
+            _renderer.DrawImage(mousePointerTest, new Vector2(mousePosition.X, mousePosition.Y));
             _renderer.DrawString(fontTest, string.Format("Hello World!!! {0}", gameTime.TotalGameTime.TotalMilliseconds), new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
         }
 
+
         private void MouseHandle(object sender, MouseEventArgs e)
         {
-            
+            mousePosition.X = e.X;
+            mousePosition.Y = e.Y;
         }
 
         private void KeyHandle(object sender, KeyEventArgs e)

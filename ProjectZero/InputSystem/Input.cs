@@ -32,10 +32,10 @@ namespace ProjectZero.InputSystem
 
         private void ProcessMouseEvents()
         {            
-            ProcessMouseEvent(MouseButton.Left, _currentMouseState.LeftButton, _oldMouseState.LeftButton, _currentMouseState.X, _currentMouseState.Y);
+            ProcessMouseEvent(MouseButton.Left, _currentMouseState.LeftButton, _oldMouseState.LeftButton, _currentMouseState.X, _currentMouseState.Y, _oldMouseState.X, _oldMouseState.Y);
         }
 
-        private void ProcessMouseEvent(MouseButton button, ButtonState currentState, ButtonState oldState, int x, int y)
+        private void ProcessMouseEvent(MouseButton button, ButtonState currentState, ButtonState oldState, int x, int y, int oldX, int oldY)
         {
             if (currentState == ButtonState.Pressed && oldState == ButtonState.Released)
             {
@@ -48,6 +48,10 @@ namespace ProjectZero.InputSystem
             else if (currentState == ButtonState.Released && oldState == ButtonState.Pressed)
             {
                 OnMouseEvent(new MouseEventArgs(x, y, button, KeyState.Up));
+            }
+            else if (x != oldX || y != oldY)
+            {
+                OnMouseEvent(new MouseEventArgs(x, y, 0, KeyState.Up));
             }
         }
 

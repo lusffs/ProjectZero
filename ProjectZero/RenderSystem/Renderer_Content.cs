@@ -112,7 +112,7 @@ namespace ProjectZero.RenderSystem
                         _texture = Texture2D.FromStream(graphicsDevice, s);
                     }
                 }
-                catch (IOException)
+                catch (Exception)
                 {
                     // TODO:    should use default texture here.
                 }

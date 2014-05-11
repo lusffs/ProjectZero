@@ -22,7 +22,7 @@ namespace ProjectZero
         {
             Content.RootDirectory = "Content";
             _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
-            _soundRenderer = new SoundRenderer();
+            _soundRenderer = new SoundRenderer(Content);
             _input = new Input();
             _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
         }

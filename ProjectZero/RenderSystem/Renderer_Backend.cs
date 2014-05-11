@@ -12,7 +12,7 @@ namespace ProjectZero.RenderSystem
     {
         private List<Command> _commands = new List<Command>();
 
-        public void RenderToScreen(GameTime gameTime)
+        public void Render(GameTime gameTime)
         {
             foreach (var c in _commands)
             {

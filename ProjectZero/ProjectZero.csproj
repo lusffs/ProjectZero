@@ -82,6 +82,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wrap_oal.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Content\README.txt" />
     <Content Include="Content\images\gifs\slime_down.gif" />
     <Content Include="Content\images\gifs\slime_left.gif" />

@@ -64,6 +64,8 @@
     <Compile Include="RenderSystem\FontHandle.cs" />
     <Compile Include="RenderSystem\TextureHandle.cs" />
     <Compile Include="SoundSystem\SoundHandle.cs" />
+    <Compile Include="SoundSystem\SoundRenderer_Frontend.cs" />
+    <Compile Include="SoundSystem\SoundSystemHandle.cs" />
     <Compile Include="SoundSystem\SoundRenderer_Backend.cs" />
     <Compile Include="SoundSystem\SoundRenderer.cs" />
     <Compile Include="SoundSystem\SoundRenderer_Content.cs" />
@@ -89,6 +91,10 @@
     <Content Include="Content\images\slime_left.png" />
     <Content Include="Content\images\slime_right.png" />
     <Content Include="Content\images\slime_up.png" />
+    <Content Include="Content\sound\plong.wav" />
+    <Content Include="OpenAL32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SDL.dll" />
     <Content Include="Content\images\slime.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ProjectZero.SoundSystem
 {
-    public abstract class SoundHandle
+    public abstract class SoundHandle : SoundSystemHandle
     {
-        public abstract void Load();
-
-        public abstract void Unload();
+        /// <summary>
+        /// Will be null if sound isn't loaded.
+        /// </summary>
+        /// <returns></returns>
+        public abstract SoundEffect Sound { get; }
     }
 }

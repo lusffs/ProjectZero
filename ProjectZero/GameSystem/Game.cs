@@ -42,12 +42,18 @@ namespace ProjectZero.GameSystem
 
         FontHandle fontTest;
 
+        SoundHandle soundTest;
+
         public void RegisterContent()
         {
             // register any content here through sub systems.
             slimeImageTest = _renderer.RegisterTexture2D("images/slime.png");
             fontTest = _renderer.RegisterFont("fonts/console");
+
+            soundTest = _soundRenderer.RegisterSound("sound/plong.wav");
         }
+
+        double soundTestLastTime = 0;
 
         public void Frame(GameTime gameTime)
         {
@@ -56,13 +62,20 @@ namespace ProjectZero.GameSystem
             // update game state stuff here.
 
             // update output here based on updated game state stuff.
+
+            if (gameTime.TotalGameTime.TotalMilliseconds > soundTestLastTime + 2000)
+            {
+                soundTestLastTime = gameTime.TotalGameTime.TotalMilliseconds;
+                _soundRenderer.PlaySound(soundTest);
+            }
+
             _renderer.ClearScreen(Color.AliceBlue);
 
             _renderer.DrawImage(slimeImageTest, new Vector2(slimeXTest, slimeYTest));
 
             _renderer.DrawImage(slimeImageTest, new Vector2(10, 10), 50, 50);
 
-            _renderer.DrawString(fontTest, "Hello World!!!", new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
+            _renderer.DrawString(fontTest, string.Format("Hello World!!! {0}", gameTime.TotalGameTime.TotalMilliseconds), new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
         }
 
         private void MouseHandle(object sender, MouseEventArgs e)

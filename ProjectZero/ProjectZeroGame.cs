@@ -79,7 +79,7 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            _renderer.RenderToScreen(gameTime);
+            _renderer.Render(gameTime);
 
             base.Draw(gameTime);
         }

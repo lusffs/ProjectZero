@@ -95,7 +95,9 @@
     <Content Include="Content\images\slime_left.png" />
     <Content Include="Content\images\slime_right.png" />
     <Content Include="Content\images\slime_up.png" />
-    <Content Include="Content\sound\plong.wav" />
+    <Content Include="Content\sound\plong.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="OpenAL32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

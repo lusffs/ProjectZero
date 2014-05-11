@@ -23,6 +23,13 @@ namespace ProjectZero.RenderSystem
             _commands.Add(new DrawImageCommand(texture, position, null, _imageSpriteBatch));
         }
 
+        public void DrawImage(TextureHandle texture, Vector2 position, int width, int height)
+        {
+            Texture2D t = (Texture2D)texture.Texture;
+            Debug.Assert(t != null, "texture should be a handle for Texture2D");
+            _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), _imageSpriteBatch));
+        }
+
         public void DrawString(FontHandle font, string text, Vector2 position, Color color)
         {
             _commands.Add(new DrawStringCommand(font, position, color, text, _textSpriteBatch));

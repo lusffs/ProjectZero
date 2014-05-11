@@ -50,9 +50,14 @@ namespace ProjectZero.GameSystem
         {
             _gameTime = gameTime;
 
+            // update game state stuff here.
+
+            // update output here based on updated game state stuff.
             _renderer.ClearScreen(Color.AliceBlue);
 
             _renderer.DrawImage(slimeImageTest, new Vector2(slimeXTest, slimeYTest));
+
+            _renderer.DrawImage(slimeImageTest, new Vector2(10, 10), 50, 50);
 
             _renderer.DrawString(fontTest, "Hello World!!!", new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
         }

@@ -7,12 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZero.RenderSystem
 {
-    public abstract class TextureHandle : RendererHandle
+    public abstract class FontHandle : RendererHandle
     {
         /// <summary>
-        /// Will be null if texture isn't loaded.
+        /// Will be null if font isn't loaded.
         /// </summary>
         /// <returns></returns>
-        public abstract Texture Texture { get; }
+        public abstract SpriteFont Font { get; }
     }
 }

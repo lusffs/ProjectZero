@@ -56,14 +56,20 @@
     <Compile Include="ProjectZeroGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RenderSystem\RendererHandle.cs" />
     <Compile Include="RenderSystem\Renderer_Backend.cs" />
     <Compile Include="RenderSystem\Renderer_Frontend.cs" />
     <Compile Include="RenderSystem\Renderer.cs" />
     <Compile Include="RenderSystem\Renderer_Content.cs" />
+    <Compile Include="RenderSystem\FontHandle.cs" />
     <Compile Include="RenderSystem\TextureHandle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Content\fonts\console.spritefont" />
+    <None Include="Content\fonts\console.xnb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Content\images\test.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

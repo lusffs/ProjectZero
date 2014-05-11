@@ -64,5 +64,31 @@ namespace ProjectZero.RenderSystem
                 _spriteBatch.End();
             }
         }
+
+        private class DrawStringCommand : Command
+        {
+            private readonly FontHandle _font;
+            private readonly Vector2 _poistion;
+            private readonly Color _color;
+            private readonly string _text;
+            private readonly SpriteBatch _spriteBatch;
+
+            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch)
+            {
+                _font = font;
+                _poistion = position;
+                _color = color;
+                _text = text;
+                _spriteBatch = spriteBatch;
+            }
+
+            public override void Render(Renderer renderer, GameTime gameTime)
+            {
+                // TODO:    should include sort mode, blend state.
+                _spriteBatch.Begin();// SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                _spriteBatch.DrawString(_font.Font, _text, _poistion, _color);
+                _spriteBatch.End();
+            }
+        }
     }
 }

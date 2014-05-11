@@ -37,10 +37,13 @@ namespace ProjectZero.GameSystem
         TextureHandle slimeImageTest;
         float slimeXTest, slimeYTest;
 
+        FontHandle fontTest;
+
         public void RegisterContent()
         {
             // register any content here through sub systems.
             slimeImageTest = _renderer.RegisterTexture2D("images/slime.png");
+            fontTest = _renderer.RegisterFont("fonts/console");
         }
 
         public void Frame(GameTime gameTime)
@@ -50,6 +53,8 @@ namespace ProjectZero.GameSystem
             _renderer.ClearScreen(Color.AliceBlue);
 
             _renderer.DrawImage(slimeImageTest, new Vector2(slimeXTest, slimeYTest));
+
+            _renderer.DrawString(fontTest, "Hello World!!!", new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
         }
 
         private void MouseHandle(object sender, MouseEventArgs e)

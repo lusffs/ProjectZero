@@ -5,13 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZero.RenderSystem
 {
     public partial class Renderer
     {
-        private List<TextureHandle> _textures = new List<TextureHandle>();
+        private List<RendererHandle> _contents = new List<RendererHandle>();
 
         private void InitContent(GraphicsDevice graphicsDevice)
         {
@@ -39,9 +40,19 @@ namespace ProjectZero.RenderSystem
             // file names is releative to root content directory.
             string path = Path.Combine(ContentManager.RootDirectory, fileName);
             Texture2DStream texture = new Texture2DStream(path);
-            _textures.Add(texture);
+            _contents.Add(texture);
 
             return texture;
+        }
+
+        public FontHandle RegisterFont(string fileName)
+        {
+            Debug.Assert(Path.GetExtension(fileName) == string.Empty, "xnb file names should never have extension");
+
+            FontSprite font = new FontSprite(fileName);
+            _contents.Add(font);
+
+            return font;
         }
 
         public void LoadContent(GraphicsDevice graphicsDevice)
@@ -49,10 +60,11 @@ namespace ProjectZero.RenderSystem
             InitContent(graphicsDevice);
 
             _imageSpriteBatch = new SpriteBatch(GraphicsDevice);
+            _textSpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            foreach (var t in _textures)
+            foreach (var t in _contents)
             {
-                t.Load(GraphicsDevice);
+                t.Load(GraphicsDevice, ContentManager);
             }
         }
 
@@ -61,7 +73,10 @@ namespace ProjectZero.RenderSystem
             _imageSpriteBatch.Dispose();
             _imageSpriteBatch = null;
 
-            foreach (var t in _textures)
+            _textSpriteBatch.Dispose();
+            _textSpriteBatch = null;
+
+            foreach (var t in _contents)
             {
                 t.Unload();
             }
@@ -88,7 +103,7 @@ namespace ProjectZero.RenderSystem
                 }
             }
 
-            public override void Load(GraphicsDevice graphicsDevice)
+            public override void Load(GraphicsDevice graphicsDevice, ContentManager contentManager)
             {
                 try
                 {
@@ -107,6 +122,43 @@ namespace ProjectZero.RenderSystem
             {
                 _texture.Dispose();
                 _texture = null;
+            }
+        }
+
+        private class FontSprite : FontHandle
+        {
+            private readonly string _fileName;
+            private SpriteFont _font;
+
+            public FontSprite(string fileName)
+            {
+                _fileName = fileName;
+            }
+
+
+            public override SpriteFont Font
+            {
+                get
+                {
+                    return _font;
+                }
+            }
+
+            public override void Load(GraphicsDevice graphicsDevice, ContentManager contentManager)
+            {
+                try
+                {
+                    _font = contentManager.Load<SpriteFont>(_fileName);
+                }
+                catch (Exception)
+                {
+                    // TODO:    should use default font here. 
+                }
+            }
+
+            public override void Unload()
+            {
+                _font = null;
             }
         }
     }

@@ -85,10 +85,13 @@
     <Content Include="Content\images\gifs\slime_left.gif" />
     <Content Include="Content\images\gifs\slime_right.gif" />
     <Content Include="Content\images\gifs\slime_up.gif" />
+    <Content Include="Content\images\tiles\grass.png" />
     <Content Include="Content\images\slime_down.png" />
     <Content Include="Content\images\slime_left.png" />
     <Content Include="Content\images\slime_right.png" />
     <Content Include="Content\images\slime_up.png" />
+    <Content Include="Content\images\tower.png" />
+    <Content Include="Content\images\ui\cursor.png" />
     <Content Include="SDL.dll" />
     <Content Include="Content\images\slime.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

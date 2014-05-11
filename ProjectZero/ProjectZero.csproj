@@ -80,7 +80,7 @@
     <Content Include="Content\images\slime_right.png" />
     <Content Include="Content\images\slime_up.png" />
     <Content Include="SDL.dll" />
-    <Content Include="Content\images\Slime.png">
+    <Content Include="Content\images\slime.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

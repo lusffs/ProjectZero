@@ -40,7 +40,7 @@ namespace ProjectZero.GameSystem
         public void RegisterContent()
         {
             // register any content here through sub systems.
-            slimeImageTest = _renderer.RegisterTexture2D("images/Slime.png");
+            slimeImageTest = _renderer.RegisterTexture2D("images/slime.png");
         }
 
         public void Frame(GameTime gameTime)

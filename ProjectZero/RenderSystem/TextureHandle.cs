@@ -14,5 +14,10 @@ namespace ProjectZero.RenderSystem
         /// </summary>
         /// <returns></returns>
         public abstract Texture Texture { get; }
+
+        public abstract int Width { get; }
+
+        public abstract int Height { get; }
+
     }
 }

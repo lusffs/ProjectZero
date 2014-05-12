@@ -8,6 +8,7 @@ using XnaInput = Microsoft.Xna.Framework.Input;
 using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
 using ProjectZero.SoundSystem;
+using ProjectZero.Framework;
 
 namespace ProjectZero.GameSystem
 {
@@ -36,6 +37,8 @@ namespace ProjectZero.GameSystem
             slimeXTest = 50 + r.Next(150);
             slimeYTest = 50 + r.Next(150);
             mousePosition = new Point(0, 0);
+
+            animationTest = new Animation(_renderer, "slime");
         }
 
         TextureHandle slimeImageTest;
@@ -48,6 +51,8 @@ namespace ProjectZero.GameSystem
 
         SoundHandle soundTest;
 
+        Animation animationTest;
+
         public void RegisterContent()
         {
             // register any content here through sub systems.
@@ -56,6 +61,13 @@ namespace ProjectZero.GameSystem
             mousePointerTest = _renderer.RegisterTexture2D("images/ui/cursor.png");
 
             soundTest = _soundRenderer.RegisterSound("sound/plong.wav");
+
+            animationTest.RegisterContent();
+        }
+
+        public void ContentLoaded()
+        {
+            animationTest.ContentLoaded();
         }
 
         double soundTestLastTime = 0;
@@ -76,14 +88,17 @@ namespace ProjectZero.GameSystem
 
             _renderer.ClearScreen(Color.AliceBlue);
 
-            _renderer.DrawImage(slimeImageTest, new Vector2(slimeXTest, slimeYTest));
+            //_renderer.DrawImage(slimeImageTest, new Vector2(slimeXTest, slimeYTest));
 
-            _renderer.DrawImage(slimeImageTest, new Vector2(10, 10), 50, 50);
+            //_renderer.DrawImage(slimeImageTest, new Vector2(10, 10), 50, 50);
 
             _renderer.DrawString(fontTest, "Hello World!!!", new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
          
             _renderer.DrawImage(mousePointerTest, new Vector2(mousePosition.X, mousePosition.Y));
             _renderer.DrawString(fontTest, string.Format("Hello World!!! {0}", gameTime.TotalGameTime.TotalMilliseconds), new Vector2(_renderer.GraphicsDevice.Viewport.Width / 2, 10), Color.Black);
+
+            // Monster
+            animationTest.Update(new Vector2(slimeXTest, slimeYTest), _gameTime);
         }
 
 
@@ -100,19 +115,36 @@ namespace ProjectZero.GameSystem
             if (e.Key == XnaInput.Keys.Left && e.State == KeyState.Pressed)
             {
                 slimeXTest -= speed * _gameTime.ElapsedGameTime.Milliseconds / 1000f;
+                animationTest.Direction = AnimationDirection.Left;
             }
             else if (e.Key == XnaInput.Keys.Right && e.State == KeyState.Pressed)
             {
                 slimeXTest += speed * _gameTime.ElapsedGameTime.Milliseconds / 1000f;
+                animationTest.Direction = AnimationDirection.Right;
             }
             else if (e.Key == XnaInput.Keys.Up && e.State == KeyState.Pressed)
             {
                 slimeYTest -= speed * _gameTime.ElapsedGameTime.Milliseconds / 1000f;
+                animationTest.Direction = AnimationDirection.Up;
             }
             else if (e.Key == XnaInput.Keys.Down && e.State == KeyState.Pressed)
             {
                 slimeYTest += speed * _gameTime.ElapsedGameTime.Milliseconds / 1000f;
+                animationTest.Direction = AnimationDirection.Down;
             }
+
+            if (e.Key == XnaInput.Keys.P && e.State == KeyState.Down)
+            {
+                if (animationTest.IsPlaying)
+                {
+                    animationTest.Stop();
+                }
+                else
+                {
+                    animationTest.Play();
+                }
+            }
+
         }
     }
 }

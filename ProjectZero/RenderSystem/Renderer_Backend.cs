@@ -46,13 +46,15 @@ namespace ProjectZero.RenderSystem
             private readonly TextureHandle _texture;
             private readonly Vector2? _poistion;
             private readonly Rectangle? _drawRect;
+            private readonly Rectangle? _sourceRect;
             private readonly SpriteBatch _spriteBatch;
 
-            public DrawImageCommand(TextureHandle texture, Vector2? position, Rectangle? drawRect, SpriteBatch spriteBatch)
+            public DrawImageCommand(TextureHandle texture, Vector2? position, Rectangle? drawRect, Rectangle? sourceRect, SpriteBatch spriteBatch)
             {
                 _texture = texture;
                 _poistion = position;
                 _drawRect = drawRect;
+                _sourceRect = sourceRect;
                 _spriteBatch = spriteBatch;
             }
 
@@ -60,7 +62,7 @@ namespace ProjectZero.RenderSystem
             {
                 // TODO:    should include sort mode, blend state.
                 _spriteBatch.Begin();
-                _spriteBatch.Draw((Texture2D)_texture.Texture, position: _poistion, drawRectangle: _drawRect);
+                _spriteBatch.Draw((Texture2D)_texture.Texture, position: _poistion, drawRectangle: _drawRect, sourceRectangle: _sourceRect);
                 _spriteBatch.End();
             }
         }

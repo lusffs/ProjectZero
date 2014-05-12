@@ -89,7 +89,9 @@ namespace ProjectZero.RenderSystem
         {
             private readonly string _fileName;
             private Texture2D _texture = null;
-
+            private int _width;
+            private int _height;
+             
             public Texture2DStream(string fileName)
             {
                 _fileName = fileName;                
@@ -103,6 +105,22 @@ namespace ProjectZero.RenderSystem
                 }
             }
 
+            public override int Width
+            {
+                get
+                {
+                    return _width;
+                }
+            }
+
+            public override int Height
+            {
+                get
+                {
+                    return _height;
+                }
+            }
+
             public override void Load(GraphicsDevice graphicsDevice, ContentManager contentManager)
             {
                 try
@@ -110,6 +128,8 @@ namespace ProjectZero.RenderSystem
                     using (var s = File.OpenRead(_fileName))
                     {
                         _texture = Texture2D.FromStream(graphicsDevice, s);
+                        _width = ((Texture2D)_texture).Width;
+                        _height = ((Texture2D)_texture).Height;
                     }
                 }
                 catch (Exception)

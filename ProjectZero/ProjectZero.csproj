@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Framework\Animation.cs" />
     <Compile Include="GameSystem\Game.cs" />
     <Compile Include="InputSystem\Input.cs" />
     <Compile Include="InputSystem\KeyEventArgs.cs" />
@@ -72,6 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Content\animations\slime.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\fonts\console.spritefont" />
     <None Include="Content\fonts\console.xnb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -82,6 +86,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\tower_magic_overlay.png" />
     <Content Include="wrap_oal.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

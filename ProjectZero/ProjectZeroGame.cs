@@ -50,6 +50,7 @@ namespace ProjectZero
             // this will actually load content.
             _renderer.LoadContent(GraphicsDevice);
             _soundRenderer.LoadContent();
+            _game.ContentLoaded();
         }
 
         /// <summary>

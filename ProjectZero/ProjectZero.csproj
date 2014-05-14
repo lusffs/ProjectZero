@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\Animation.cs" />
+    <Compile Include="Framework\PathFinding\Cell.cs" />
+    <Compile Include="Framework\PathFinding\PathFinder.cs" />
     <Compile Include="GameSystem\Game.cs" />
     <Compile Include="InputSystem\Input.cs" />
     <Compile Include="InputSystem\KeyEventArgs.cs" />

@@ -13,6 +13,8 @@ namespace ProjectZero.RenderSystem
     public partial class Renderer
     {
         private List<RendererHandle> _contents = new List<RendererHandle>();
+        private Dictionary<string, TextureHandle> _texture2d = new Dictionary<string, TextureHandle>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, FontHandle> _fonts = new Dictionary<string, FontHandle>(StringComparer.OrdinalIgnoreCase);
 
         private void InitContent(GraphicsDevice graphicsDevice)
         {
@@ -39,8 +41,15 @@ namespace ProjectZero.RenderSystem
 
             // file names is releative to root content directory.
             string path = Path.Combine(ContentManager.RootDirectory, fileName);
-            Texture2DStream texture = new Texture2DStream(path);
+            TextureHandle texture;
+            if (_texture2d.TryGetValue(path, out texture))
+            {
+                return texture;
+
+            }
+            texture = new Texture2DStream(path);
             _contents.Add(texture);
+            _texture2d.Add(path, texture);
 
             return texture;
         }
@@ -49,8 +58,14 @@ namespace ProjectZero.RenderSystem
         {
             Debug.Assert(Path.GetExtension(fileName) == string.Empty, "xnb file names should never have extension");
 
-            FontSprite font = new FontSprite(fileName);
+            FontHandle font;
+            if (_fonts.TryGetValue(fileName, out font))
+            {
+                return font;
+            }
+            font = new FontSprite(fileName);
             _contents.Add(font);
+            _fonts.Add(fileName, font);
 
             return font;
         }

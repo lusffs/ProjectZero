@@ -79,6 +79,8 @@ namespace ProjectZero.Framework
             }
         }
 
+        public int TileSize {  get { return _tileSize; } }
+
         public AnimationDirection Direction
         {
             get

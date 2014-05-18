@@ -80,6 +80,21 @@ namespace ProjectZero.GameSystem
             int x = _random.Next(Map.Columns);
             int y = _random.Next(Map.Rows);
 
+            var cell = Map.Cells[y, x];
+            int runaway = 0;
+
+            while (cell.IsStart || cell.IsTarget)
+            {
+                x = _random.Next(Map.Columns);
+                y = _random.Next(Map.Rows);
+                cell = Map.Cells[y, x];
+
+                if (runaway++ > 1000)
+                {
+                    return;
+                }
+            }
+
             Map.Grid[y][x].Solid = true;
             Map.Cells[y, x].IsBlocked = true;            
         }

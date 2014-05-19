@@ -40,7 +40,6 @@ namespace ProjectZero.GameSystem
         {
             // register any content here through sub systems.
             _world.RegisterContent();
-
         }
 
         public void ContentLoaded()

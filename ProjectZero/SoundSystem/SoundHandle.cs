@@ -14,5 +14,7 @@ namespace ProjectZero.SoundSystem
         /// </summary>
         /// <returns></returns>
         public abstract SoundEffect Sound { get; }
+
+        public abstract TimeSpan Duration { get; }
     }
 }

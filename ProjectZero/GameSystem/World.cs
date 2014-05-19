@@ -36,7 +36,7 @@ namespace ProjectZero.GameSystem
         private TextureHandle _tower;
 
         private bool _mapHasNewBlockingEntity = true;
-        private List<Tuple<int, int>> _path = new List<Tuple<int, int>>(); 
+        private List<Point> _path = new List<Point>(); 
 
         public void RegisterContent()
         {
@@ -57,7 +57,9 @@ namespace ProjectZero.GameSystem
 
             if (_mapHasNewBlockingEntity)
             {
-                _path = PathFinder.GetShortestPath(Map.Cells, Tuple.Create(0, 0), Tuple.Create(10, 22));
+                Point start, end;
+                GetMonsterSpawnAndDefensePoints(out start, out end);
+                _path = PathFinder.GetShortestPath(Map.Cells, start, end);
                 _mapHasNewBlockingEntity = false;
             }
             
@@ -65,7 +67,7 @@ namespace ProjectZero.GameSystem
             {
                 foreach (var segment in _path)
                 {
-                    Renderer.DrawImage(_segmentTexture, new Vector2(segment.Item2 * Map.TileSize, segment.Item1 * Map.TileSize));
+                    Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize));
                 }
             }
 
@@ -79,6 +81,12 @@ namespace ProjectZero.GameSystem
                     }
                 }
             }            
+        }
+
+        private void GetMonsterSpawnAndDefensePoints(out Point monsterSpawn, out Point defensePoint)
+        {
+            monsterSpawn = new Point((int)(Map.MonsterSpawn.Position.X / Map.TileSize), (int)(Map.MonsterSpawn.Position.Y / Map.TileSize));
+            defensePoint = new Point((int)(Map.DefensePoint.Position.X / Map.TileSize), (int)(Map.DefensePoint.Position.Y / Map.TileSize));
         }
 
         private Random _random = new Random();
@@ -107,7 +115,9 @@ namespace ProjectZero.GameSystem
             Map.Grid[y][x].Solid = true;
             Map.Cells[y, x].IsBlocked = true;
             // If the new tower blocks the path totally, don't allow it
-            if (!PathFinder.PathExists(Map.Cells, Tuple.Create(0, 0), Tuple.Create(10, 22)))
+            Point start, end;
+            GetMonsterSpawnAndDefensePoints(out start, out end);
+            if (!PathFinder.PathExists(Map.Cells, start, end))
             {
                 Map.Grid[y][x].Solid = false;
                 Map.Cells[y, x].IsBlocked = false;

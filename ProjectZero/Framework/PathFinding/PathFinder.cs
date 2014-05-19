@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace ProjectZero.Framework.PathFinding
 {
@@ -15,12 +16,12 @@ namespace ProjectZero.Framework.PathFinding
         // 1. Query for shortest path when player is ready to start round.
         //    2.1 If null is returned, there is no path for enemies and the mob turn can't begin
         //    2.2 else, a path of coordinates in the grid is returned
-        public static List<Tuple<int, int>> GetShortestPath(Cell[,] grid, Tuple<int, int> start, Tuple<int, int> target)
+        public static List<Point> GetShortestPath(Cell[,] grid, Point start, Point target)
         {
             // Reset distances to cells
             ClearMap(grid);
 
-            CalculatePaths(grid, start.Item1, start.Item2);
+            CalculatePaths(grid, start.Y, start.X);
 
             if (PathExists(grid, target))
             {
@@ -32,10 +33,10 @@ namespace ProjectZero.Framework.PathFinding
 
         // Could possibly be useful if run when player tries to build in a location in order to
         // prevent a complete block of the target
-        public static bool PathExists(Cell[,] grid, Tuple<int, int> start, Tuple<int, int> target)
+        public static bool PathExists(Cell[,] grid, Point start, Point target)
         {
             ClearMap(grid);
-            CalculatePaths(grid, start.Item1, start.Item2);
+            CalculatePaths(grid, start.Y, start.X);
             return PathExists(grid, target);            
         }
 
@@ -50,27 +51,27 @@ namespace ProjectZero.Framework.PathFinding
             }
         }
 
-        private static bool PathExists(Cell[,] grid, Tuple<int, int> target)
+        private static bool PathExists(Cell[,] grid, Point target)
         {
-            return grid[target.Item1, target.Item2].DistanceFromStart > 0;
+            return grid[target.Y, target.X].DistanceFromStart > 0;
         }
 
-        private static List<Tuple<int, int>> GetShortestPath(Cell[,] grid, Tuple<int, int> target)
+        private static List<Point> GetShortestPath(Cell[,] grid, Point target)
         {
-            var path = new List<Tuple<int, int>> { target };
+            var path = new List<Point> { target };
 
             while (true)
             {
-                var cellPosition = GetBestConnection(grid, target.Item1, target.Item2);
+                var cellPosition = GetBestConnection(grid, target.Y, target.X);
 
-                if (grid[cellPosition.Item1, cellPosition.Item2].IsStart)
+                if (grid[cellPosition.Y, cellPosition.X].IsStart)
                     break;
 
-                target = new Tuple<int, int>(cellPosition.Item1, cellPosition.Item2);
+                target = new Point(cellPosition.X, cellPosition.Y);
                 path.Add(target);
 
                 // This row isn't really needed for anything. See Cell.IsParthOfPath obsolete message.
-                grid[cellPosition.Item1, cellPosition.Item2].IsPartOfPath = true;
+                grid[cellPosition.Y, cellPosition.X].IsPartOfPath = true;
             }
 
             path.Reverse();
@@ -84,54 +85,54 @@ namespace ProjectZero.Framework.PathFinding
 
             foreach (var openNeighbour in openNeighbours)
             {
-                grid[openNeighbour.Item1, openNeighbour.Item2].DistanceFromStart = cell.DistanceFromStart + 1;
-                CalculatePaths(grid, openNeighbour.Item1, openNeighbour.Item2);
+                grid[openNeighbour.Y, openNeighbour.X].DistanceFromStart = cell.DistanceFromStart + 1;
+                CalculatePaths(grid, openNeighbour.Y, openNeighbour.X);
             }
         }
 
-        private static Tuple<int, int> GetBestConnection(Cell[,] grid, int rowIndex, int colIndex)
+        private static Point GetBestConnection(Cell[,] grid, int rowIndex, int colIndex)
         {
-            var validNeighbours = new List<Tuple<int, int>>();
+            var validNeighbours = new List<Point>();
 
             if (IsLegalStep(grid, rowIndex - 0, colIndex - 1))
             {
-                validNeighbours.Add(new Tuple<int, int>(rowIndex, colIndex - 1));
+                validNeighbours.Add(new Point(colIndex - 1, rowIndex));
             }
             if (IsLegalStep(grid, rowIndex - 1, colIndex - 0))
             {
-                validNeighbours.Add(new Tuple<int, int>(rowIndex - 1, colIndex));
+                validNeighbours.Add(new Point(colIndex, rowIndex - 1));
             }
             if (IsLegalStep(grid, rowIndex + 1, colIndex - 0))
             {
-                validNeighbours.Add(new Tuple<int, int>(rowIndex + 1, colIndex));
+                validNeighbours.Add(new Point(colIndex, rowIndex + 1));
             }
             if (IsLegalStep(grid, rowIndex - 0, colIndex + 1))
             {
-                validNeighbours.Add(new Tuple<int, int>(rowIndex, colIndex + 1));
+                validNeighbours.Add(new Point(colIndex + 1, rowIndex));
             }
 
-            return validNeighbours.OrderBy(x => grid[x.Item1, x.Item2].DistanceFromStart).First();
+            return validNeighbours.OrderBy(x => grid[x.Y, x.X].DistanceFromStart).First();
         }
 
-        private static IEnumerable<Tuple<int, int>> GetNextSteps(Cell[,] grid, int rowIndex, int colIndex)
+        private static IEnumerable<Point> GetNextSteps(Cell[,] grid, int rowIndex, int colIndex)
         {
-            var openNeighbours = new List<Tuple<int, int>>();
+            var openNeighbours = new List<Point>();
 
             if (ShouldMove(grid, rowIndex - 0, colIndex - 1, grid[rowIndex, colIndex].DistanceFromStart))
             {
-                openNeighbours.Add(new Tuple<int, int>(rowIndex, colIndex - 1));
+                openNeighbours.Add(new Point(colIndex - 1, rowIndex));
             }
             if (ShouldMove(grid, rowIndex - 1, colIndex - 0, grid[rowIndex, colIndex].DistanceFromStart))
             {
-                openNeighbours.Add(new Tuple<int, int>(rowIndex - 1, colIndex));
+                openNeighbours.Add(new Point(colIndex, rowIndex - 1));
             }
             if (ShouldMove(grid, rowIndex + 1, colIndex - 0, grid[rowIndex, colIndex].DistanceFromStart))
             {
-                openNeighbours.Add(new Tuple<int, int>(rowIndex + 1, colIndex));
+                openNeighbours.Add(new Point(colIndex, rowIndex + 1));
             }
             if (ShouldMove(grid, rowIndex - 0, colIndex + 1, grid[rowIndex, colIndex].DistanceFromStart))
             {
-                openNeighbours.Add(new Tuple<int, int>(rowIndex, colIndex + 1));
+                openNeighbours.Add(new Point(colIndex + 1, rowIndex));
             }
 
             return openNeighbours;

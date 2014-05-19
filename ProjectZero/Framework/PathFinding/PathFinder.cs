@@ -34,6 +34,7 @@ namespace ProjectZero.Framework.PathFinding
         // prevent a complete block of the target
         public static bool PathExists(Cell[,] grid, Tuple<int, int> start, Tuple<int, int> target)
         {
+            ClearMap(grid);
             CalculatePaths(grid, start.Item1, start.Item2);
             return PathExists(grid, target);            
         }

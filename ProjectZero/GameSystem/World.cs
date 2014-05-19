@@ -105,7 +105,13 @@ namespace ProjectZero.GameSystem
             }
 
             Map.Grid[y][x].Solid = true;
-            Map.Cells[y, x].IsBlocked = true;            
+            Map.Cells[y, x].IsBlocked = true;
+            // If the new tower blocks the path totally, don't allow it
+            if (!PathFinder.PathExists(Map.Cells, Tuple.Create(0, 0), Tuple.Create(10, 22)))
+            {
+                Map.Grid[y][x].Solid = false;
+                Map.Cells[y, x].IsBlocked = false;
+            }
         }
     }
 }

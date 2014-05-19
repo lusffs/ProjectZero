@@ -17,6 +17,9 @@ namespace ProjectZero.Framework.PathFinding
         //    2.2 else, a path of coordinates in the grid is returned
         public static List<Tuple<int, int>> GetShortestPath(Cell[,] grid, Tuple<int, int> start, Tuple<int, int> target)
         {
+            // Reset distances to cells
+            ClearMap(grid);
+
             CalculatePaths(grid, start.Item1, start.Item2);
 
             if (PathExists(grid, target))
@@ -33,6 +36,17 @@ namespace ProjectZero.Framework.PathFinding
         {
             CalculatePaths(grid, start.Item1, start.Item2);
             return PathExists(grid, target);            
+        }
+
+        private static void ClearMap(Cell[,] grid)
+        {
+            for (var row = 0; row < grid.GetLength(0); row++)
+            {
+                for (var col = 0; col < grid.GetLength(1); col++)
+                {
+                    grid[row, col].DistanceFromStart = 0;
+                }
+            }
         }
 
         private static bool PathExists(Cell[,] grid, Tuple<int, int> target)

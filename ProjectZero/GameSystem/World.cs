@@ -35,6 +35,9 @@ namespace ProjectZero.GameSystem
 
         private TextureHandle _tower;
 
+        private bool _mapHasNewBlockingEntity = true;
+        private List<Tuple<int, int>> _path = new List<Tuple<int, int>>(); 
+
         public void RegisterContent()
         {
             Map.RegisterContent();
@@ -52,10 +55,15 @@ namespace ProjectZero.GameSystem
         {
             Map.Update(gameTime);
 
-            var path = PathFinder.GetShortestPath(Map.Cells, Tuple.Create(0, 0), Tuple.Create(10, 22));
-            if (path != null)
+            if (_mapHasNewBlockingEntity)
             {
-                foreach (var segment in path)
+                _path = PathFinder.GetShortestPath(Map.Cells, Tuple.Create(0, 0), Tuple.Create(10, 22));
+                _mapHasNewBlockingEntity = false;
+            }
+            
+            if (_path != null)
+            {
+                foreach (var segment in _path)
                 {
                     Renderer.DrawImage(_segmentTexture, new Vector2(segment.Item2 * Map.TileSize, segment.Item1 * Map.TileSize));
                 }
@@ -70,13 +78,14 @@ namespace ProjectZero.GameSystem
                         Renderer.DrawImage(_tower, new Vector2(column * Map.TileSize - 16, row * Map.TileSize - 16));
                     }
                 }
-            }
+            }            
         }
 
         private Random _random = new Random();
 
         public void AddTower()
         {
+            _mapHasNewBlockingEntity = true;
             int x = _random.Next(Map.Columns);
             int y = _random.Next(Map.Rows);
 

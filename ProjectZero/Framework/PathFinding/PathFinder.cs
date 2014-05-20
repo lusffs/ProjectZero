@@ -18,6 +18,8 @@ namespace ProjectZero.Framework.PathFinding
         //    2.2 else, a path of coordinates in the grid is returned
         public static List<Point> GetShortestPath(Cell[,] grid, Point start, Point target)
         {
+            SetSize(grid);
+
             // Reset distances to cells
             ClearMap(grid);
 
@@ -27,14 +29,23 @@ namespace ProjectZero.Framework.PathFinding
             {
                 return GetShortestPath(grid, target);
             }
-            
+
             return null;
         }
+
+        private static void SetSize(Cell[,] grid)
+        {
+            _numColumnsMinusOne = grid.GetLength(1) - 1;
+            _numRowsMinusOne = grid.GetLength(0) - 1;
+        }
+
 
         // Could possibly be useful if run when player tries to build in a location in order to
         // prevent a complete block of the target
         public static bool PathExists(Cell[,] grid, Point start, Point target)
         {
+            SetSize(grid);
+
             ClearMap(grid);
             CalculatePaths(grid, start.Y, start.X);
             return PathExists(grid, target);            
@@ -167,9 +178,12 @@ namespace ProjectZero.Framework.PathFinding
             return CellWithinGridBounds(grid, row, col) && !grid[row, col].IsBlocked;
         }
 
+        private static int _numColumnsMinusOne;
+        private static int _numRowsMinusOne;
+
         private static bool CellWithinGridBounds(Cell[,] grid, int row, int col)
         {
-            if (row < 0 || col < 0 || (col > grid.GetLength(1) - 1 || row > grid.GetLength(0) - 1))
+            if (row < 0 || col < 0 || (col > _numColumnsMinusOne || row > _numRowsMinusOne))
                 return false;
             return true;
         }

@@ -50,7 +50,9 @@
     <Compile Include="Framework\PathFinding\PathFinder.cs" />
     <Compile Include="GameSystem\Entities\BaseEntity.cs" />
     <Compile Include="GameSystem\Entities\DefensePoint.cs" />
+    <Compile Include="GameSystem\Entities\Monster.cs" />
     <Compile Include="GameSystem\Entities\MonsterSpawn.cs" />
+    <Compile Include="GameSystem\Entities\Movable.cs" />
     <Compile Include="GameSystem\Entities\SpriteEntity.cs" />
     <Compile Include="GameSystem\Entities\StaticEntity.cs" />
     <Compile Include="GameSystem\Game.cs" />

@@ -10,6 +10,7 @@ namespace ProjectZero.InputSystem
     public enum MouseButton
     {
         None = 0,
-        Left = 1
+        Left = 1,
+        Right = 2
     }
 }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using ProjectZero.Framework;
 using ProjectZero.Framework.PathFinding;
 using ProjectZero.GameSystem.Entities;
 using ProjectZero.RenderSystem;
@@ -36,7 +38,9 @@ namespace ProjectZero.GameSystem
         private TextureHandle _tower;
 
         private bool _mapHasNewBlockingEntity = true;
-        private List<Point> _path = new List<Point>(); 
+        private List<Point> _path = new List<Point>();
+
+        Monster _monster;
 
         public void RegisterContent()
         {
@@ -44,11 +48,15 @@ namespace ProjectZero.GameSystem
 
             _segmentTexture = Renderer.RegisterTexture2D("images/path_marker1.png");
             _tower = Renderer.RegisterTexture2D("images/tower.png");
+
+            _monster = new Monster("slime", this);
+            _monster.RegisterContent();
         }
 
         public void ContentLoaded()
         {
-            Map.ContentLoaded();            
+            Map.ContentLoaded();
+            _monster.ContentLoaded();
         }
 
         public void Update(GameTime gameTime)
@@ -69,6 +77,8 @@ namespace ProjectZero.GameSystem
                 {
                     Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize));
                 }
+
+                _monster.Update(gameTime);
             }
 
             for (int row = 0; row < Map.Rows; row++)
@@ -83,6 +93,16 @@ namespace ProjectZero.GameSystem
             }            
         }
 
+        public void AddMonster()
+        {
+            if (_path == null)
+            {
+                return;
+            }
+
+            _monster.WalkPath(_path, Map.MonsterSpawn.Position);
+        }
+
         private void GetMonsterSpawnAndDefensePoints(out Point monsterSpawn, out Point defensePoint)
         {
             monsterSpawn = new Point((int)(Map.MonsterSpawn.Position.X / Map.TileSize), (int)(Map.MonsterSpawn.Position.Y / Map.TileSize));
@@ -91,36 +111,25 @@ namespace ProjectZero.GameSystem
 
         private Random _random = new Random();
 
-        public void AddTower()
+        public void AddTower(Point position)
         {
             _mapHasNewBlockingEntity = true;
-            int x = _random.Next(Map.Columns);
-            int y = _random.Next(Map.Rows);
-
-            var cell = Map.Cells[y, x];
-            int runaway = 0;
-
-            while (cell.IsStart || cell.IsTarget)
+            var cell = Map.Cells[position.Y, position.X];
+            var gridCell = Map.Grid[position.Y][position.X];
+            if (cell.IsStart || cell.IsTarget || gridCell.Solid)
             {
-                x = _random.Next(Map.Columns);
-                y = _random.Next(Map.Rows);
-                cell = Map.Cells[y, x];
-
-                if (runaway++ > 1000)
-                {
-                    return;
-                }
+                return;
             }
 
-            Map.Grid[y][x].Solid = true;
-            Map.Cells[y, x].IsBlocked = true;
+            gridCell.Solid = true;
+            cell.IsBlocked = true;
             // If the new tower blocks the path totally, don't allow it
             Point start, end;
             GetMonsterSpawnAndDefensePoints(out start, out end);
             if (!PathFinder.PathExists(Map.Cells, start, end))
             {
-                Map.Grid[y][x].Solid = false;
-                Map.Cells[y, x].IsBlocked = false;
+                gridCell.Solid = false;
+                cell.IsBlocked = false;
             }
         }
     }

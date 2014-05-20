@@ -33,6 +33,7 @@ namespace ProjectZero.InputSystem
         private void ProcessMouseEvents()
         {            
             ProcessMouseEvent(MouseButton.Left, _currentMouseState.LeftButton, _oldMouseState.LeftButton, _currentMouseState.X, _currentMouseState.Y, _oldMouseState.X, _oldMouseState.Y);
+            ProcessMouseEvent(MouseButton.Right, _currentMouseState.RightButton, _oldMouseState.RightButton, _currentMouseState.X, _currentMouseState.Y, _oldMouseState.X, _oldMouseState.Y);
         }
 
         private void ProcessMouseEvent(MouseButton button, ButtonState currentState, ButtonState oldState, int x, int y, int oldX, int oldY)

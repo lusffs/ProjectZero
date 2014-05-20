@@ -9,6 +9,7 @@ using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
 using ProjectZero.SoundSystem;
 using ProjectZero.Framework;
+using ProjectZero.GameSystem.Entities;
 
 namespace ProjectZero.GameSystem
 {
@@ -36,34 +37,53 @@ namespace ProjectZero.GameSystem
             _world.Initialize();            
         }
 
+        TextureHandle _mousePointer;
+        Point _mousePosition;
+
         public void RegisterContent()
         {
-            // register any content here through sub systems.
-            _world.RegisterContent();
+            // register any content here through sub system 
+            _world.RegisterContent();            
+            _mousePointer = _renderer.RegisterTexture2D("images/ui/cursor.png");
         }
 
         public void ContentLoaded()
         {
-            _world.ContentLoaded();
+            _world.ContentLoaded();            
         }
 
         public void Frame(GameTime gameTime)
         {
+            _renderer.ClearScreen(Color.Pink);
+
             _world.Update(gameTime);
+
+            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
+            {
+                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y));
+            }
         }
 
 
         private void MouseHandle(object sender, MouseEventArgs e)
         {
-            
+            _mousePosition.X = e.X;
+            _mousePosition.Y = e.Y;
+
+            if (e.Button == MouseButton.Left && e.State == KeyState.Down)
+            {
+                _world.AddTower(new Point((int)(_mousePosition.X / Map.TileSize), (int)(_mousePosition.Y / Map.TileSize)));
+            }
+
+            if (e.Button == MouseButton.Right && e.State == KeyState.Down)
+            {
+                _world.AddMonster();
+            }
         }
 
         private void KeyHandle(object sender, KeyEventArgs e)
         {
-            if (e.Key == XnaInput.Keys.A && e.State == KeyState.Down)
-            {
-                _world.AddTower();
-            }            
+            
         }
     }
 }

@@ -70,6 +70,10 @@ namespace ProjectZero.GameSystem
             _mousePosition.X = e.X;
             _mousePosition.Y = e.Y;
 
+            //Invalid click
+            if (_mousePosition.X < 0 || (_mousePosition.X / Map.TileSize) > Map.Columns - 1 || _mousePosition.Y < 0 || (_mousePosition.Y / Map.TileSize) > Map.Rows - 1)
+                return;
+
             if (e.Button == MouseButton.Left && e.State == KeyState.Down)
             {
                 _world.AddTower(new Point((int)(_mousePosition.X / Map.TileSize), (int)(_mousePosition.Y / Map.TileSize)));

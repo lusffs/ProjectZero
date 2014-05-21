@@ -10,6 +10,12 @@ namespace ProjectZero.Framework.PathFinding
     //       v
     public static class PathFinder
     {
+
+        private static int _numColumnsMinusOne;
+        private static int _numRowsMinusOne;
+        private static bool _targetHit;
+        private static Point _target;
+
         // Coordinates are in pairs of "Y, X", i.e. "row, column"
         //
         // Possible usage:
@@ -18,7 +24,7 @@ namespace ProjectZero.Framework.PathFinding
         //    2.2 else, a path of coordinates in the grid is returned
         public static List<Point> GetShortestPath(Cell[,] grid, Point start, Point target)
         {
-            SetSize(grid);
+            Setup(grid, target);
 
             // Reset distances to cells
             ClearMap(grid);
@@ -33,8 +39,10 @@ namespace ProjectZero.Framework.PathFinding
             return null;
         }
 
-        private static void SetSize(Cell[,] grid)
+        private static void Setup(Cell[,] grid, Point target)
         {
+            _target = target;
+            _targetHit = false;
             _numColumnsMinusOne = grid.GetLength(1) - 1;
             _numRowsMinusOne = grid.GetLength(0) - 1;
         }
@@ -44,7 +52,7 @@ namespace ProjectZero.Framework.PathFinding
         // prevent a complete block of the target
         public static bool PathExists(Cell[,] grid, Point start, Point target)
         {
-            SetSize(grid);
+            Setup(grid, target);
 
             ClearMap(grid);
             CalculatePaths(grid, start.Y, start.X);
@@ -53,9 +61,9 @@ namespace ProjectZero.Framework.PathFinding
 
         private static void ClearMap(Cell[,] grid)
         {
-            for (var row = 0; row < grid.GetLength(0); row++)
+            for (var row = 0; row <= _numRowsMinusOne; row++)
             {
-                for (var col = 0; col < grid.GetLength(1); col++)
+                for (var col = 0; col <= _numColumnsMinusOne; col++)
                 {
                     grid[row, col].DistanceFromStart = 0;
                 }
@@ -81,23 +89,56 @@ namespace ProjectZero.Framework.PathFinding
                 target = new Point(cellPosition.X, cellPosition.Y);
                 path.Add(target);
 
-                // This row isn't really needed for anything. See Cell.IsParthOfPath obsolete message.
-                grid[cellPosition.Y, cellPosition.X].IsPartOfPath = true;
+
             }
 
             path.Reverse();
             return path;
         }
 
+       // private static void CalculatePaths(Cell[,] grid, int currentRowIndex, int currentColIndex)
+       // {
+       //     var cell = grid[currentRowIndex, currentColIndex];
+       //     var openNeighbours = GetNextSteps(grid, currentRowIndex, currentColIndex);
+       //
+       //     foreach (var openNeighbour in openNeighbours)
+       //     {
+       //         grid[openNeighbour.Y, openNeighbour.X].DistanceFromStart = cell.DistanceFromStart + 1;
+       //         CalculatePaths(grid, openNeighbour.Y, openNeighbour.X);
+       //     }
+       // }
+
+        
         private static void CalculatePaths(Cell[,] grid, int currentRowIndex, int currentColIndex)
         {
             var cell = grid[currentRowIndex, currentColIndex];
-            var openNeighbours = GetNextSteps(grid, currentRowIndex, currentColIndex);
+            if (cell.IsTarget)
+            {
+                _targetHit = true;
+            }
+            if (_targetHit)
+            {
+                return;
+            }
+
+            // Some A* heuristics.. 
+            var openNeighbours = GetNextSteps(grid, currentRowIndex, currentColIndex).ToList();
+            //target
+            CalcAbsDistForCells(grid, openNeighbours, _target);
+            openNeighbours = openNeighbours.OrderBy(x => grid[x.Y, x.X].AbsDistFromTarget).ToList();
 
             foreach (var openNeighbour in openNeighbours)
             {
                 grid[openNeighbour.Y, openNeighbour.X].DistanceFromStart = cell.DistanceFromStart + 1;
                 CalculatePaths(grid, openNeighbour.Y, openNeighbour.X);
+            }
+        }
+
+        private static void CalcAbsDistForCells(Cell[,] grid, IEnumerable<Point> neighbours, Point target)
+        {
+            foreach (var neighbour in neighbours)
+            {
+                grid[neighbour.Y, neighbour.X].AbsDistFromTarget = grid[neighbour.Y, neighbour.X].DistanceFromStart + Math.Abs(neighbour.X - target.X) + Math.Abs(neighbour.Y - target.Y);
             }
         }
 
@@ -122,7 +163,11 @@ namespace ProjectZero.Framework.PathFinding
                 validNeighbours.Add(new Point(colIndex + 1, rowIndex));
             }
 
-            return validNeighbours.OrderBy(x => grid[x.Y, x.X].DistanceFromStart).First();
+            var orderedNeighbours = validNeighbours.OrderBy(x => grid[x.Y, x.X].DistanceFromStart);
+
+            
+            return orderedNeighbours.First(y => grid[y.Y, y.X].DistanceFromStart > 0 || grid[y.Y, y.X].IsStart);
+            
         }
 
         private static IEnumerable<Point> GetNextSteps(Cell[,] grid, int rowIndex, int colIndex)
@@ -175,13 +220,10 @@ namespace ProjectZero.Framework.PathFinding
 
         private static bool IsLegalStep(Cell[,] grid, int row, int col)
         {
-            return CellWithinGridBounds(grid, row, col) && !grid[row, col].IsBlocked;
+            return CellWithinGridBounds(row, col) && !grid[row, col].IsBlocked;
         }
 
-        private static int _numColumnsMinusOne;
-        private static int _numRowsMinusOne;
-
-        private static bool CellWithinGridBounds(Cell[,] grid, int row, int col)
+        private static bool CellWithinGridBounds(int row, int col)
         {
             if (row < 0 || col < 0 || (col > _numColumnsMinusOne || row > _numRowsMinusOne))
                 return false;

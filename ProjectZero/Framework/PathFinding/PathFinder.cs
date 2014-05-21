@@ -96,19 +96,6 @@ namespace ProjectZero.Framework.PathFinding
             return path;
         }
 
-       // private static void CalculatePaths(Cell[,] grid, int currentRowIndex, int currentColIndex)
-       // {
-       //     var cell = grid[currentRowIndex, currentColIndex];
-       //     var openNeighbours = GetNextSteps(grid, currentRowIndex, currentColIndex);
-       //
-       //     foreach (var openNeighbour in openNeighbours)
-       //     {
-       //         grid[openNeighbour.Y, openNeighbour.X].DistanceFromStart = cell.DistanceFromStart + 1;
-       //         CalculatePaths(grid, openNeighbour.Y, openNeighbour.X);
-       //     }
-       // }
-
-        
         private static void CalculatePaths(Cell[,] grid, int currentRowIndex, int currentColIndex)
         {
             var cell = grid[currentRowIndex, currentColIndex];

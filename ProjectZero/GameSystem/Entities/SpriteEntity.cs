@@ -15,7 +15,7 @@ namespace ProjectZero.GameSystem.Entities
 
         public Animation Animation { get; private set; }
 
-        public TextureHandle Image { get; private set; }
+        public TextureHandle Image { get; set; }
 
         public int Width
         {

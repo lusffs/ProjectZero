@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 namespace ProjectZero.Framework.PathFinding
 {
     // Fuck mocking?
+    // Yes, proberly
     //       |
     //       v
     public static class PathFinder

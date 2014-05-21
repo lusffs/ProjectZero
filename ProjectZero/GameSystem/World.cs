@@ -21,42 +21,43 @@ namespace ProjectZero.GameSystem
 
         public Map Map { get; private set; }
 
+        public List<BaseEntity> Entities { get; private set; }
+
         public World(Renderer renderer, SoundRenderer soundRenderer)
         {
             Renderer = renderer;
             SoundRenderer = soundRenderer;
+            Entities = new List<BaseEntity>();
         }
 
         public void Initialize()
         {
             Map = new Map("maps/test", this);
-
         }
 
         private TextureHandle _segmentTexture;
 
-        private TextureHandle _tower;
-
         private bool _mapHasNewBlockingEntity = true;
         private List<Point> _path = new List<Point>();
 
-        Monster _monster;
+        private TextureHandle _towerTexture;
 
         public void RegisterContent()
         {
             Map.RegisterContent();
 
             _segmentTexture = Renderer.RegisterTexture2D("images/path_marker1.png");
-            _tower = Renderer.RegisterTexture2D("images/tower.png");
 
-            _monster = new Monster("slime", this);
-            _monster.RegisterContent();
+            Entities.Add(new Monster("slime", this));
+            Entities[0].RegisterContent();
+
+            _towerTexture = Renderer.RegisterTexture2D("images/tower.png");
         }
 
         public void ContentLoaded()
         {
             Map.ContentLoaded();
-            _monster.ContentLoaded();
+            Entities.ForEach(x => x.ContentLoaded());            
         }
 
         public void Update(GameTime gameTime)
@@ -67,7 +68,7 @@ namespace ProjectZero.GameSystem
             {
                 Point start, end;
                 GetMonsterSpawnAndDefensePoints(out start, out end);
-                _path = PathFinder.GetShortestPath(Map.Cells, start, end);
+                _path = PathFinder.GetShortestPath(Map.Cells, start, end);                
                 _mapHasNewBlockingEntity = false;
             }
             
@@ -76,21 +77,10 @@ namespace ProjectZero.GameSystem
                 foreach (var segment in _path)
                 {
                     Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize));
-                }
-
-                _monster.Update(gameTime);
+                }                
             }
 
-            for (int row = 0; row < Map.Rows; row++)
-            {
-                for (int column = 0; column < Map.Columns; column++)
-                {
-                    if (Map.Grid[row][column].Solid)
-                    {
-                        Renderer.DrawImage(_tower, new Vector2(column * Map.TileSize - 16, row * Map.TileSize - 16));
-                    }
-                }
-            }            
+            Entities.ForEach(x => x.Update(gameTime));                  
         }
 
         public void AddMonster()
@@ -100,7 +90,7 @@ namespace ProjectZero.GameSystem
                 return;
             }
 
-            _monster.WalkPath(_path, Map.MonsterSpawn.Position);
+            ((Monster)Entities[Entities.Count - 1]).WalkPath(_path, Map.MonsterSpawn.Position);
         }
 
         private void GetMonsterSpawnAndDefensePoints(out Point monsterSpawn, out Point defensePoint)
@@ -130,7 +120,15 @@ namespace ProjectZero.GameSystem
             {
                 gridCell.Solid = false;
                 cell.IsBlocked = false;
+                return;
             }
+
+            Entities.Insert(0, new SpriteEntity("images/tower.png", this, false)
+            {
+                Image = _towerTexture,
+                Solid = true,
+                Position = new Vector2(position.X * Map.TileSize - Map.TileSize * (Map.TileSize / (float)_towerTexture.Width), position.Y * Map.TileSize - Map.TileSize * (Map.TileSize / (float)_towerTexture.Height))
+            });
         }
     }
 }

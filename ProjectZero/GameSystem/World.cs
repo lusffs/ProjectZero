@@ -80,7 +80,7 @@ namespace ProjectZero.GameSystem
                 }                
             }
 
-            Entities.ForEach(x => x.Update(gameTime));                  
+            Entities.ForEach(x => x.Update(gameTime));             
         }
 
         public void AddMonster()

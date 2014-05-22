@@ -100,7 +100,8 @@ namespace ProjectZero.GameSystem
         public void Update(GameTime gameTime)
         {
             ForAllGridCells(x => x.Update(gameTime));
-
+            
+            // TODO:    should be through entity update.
             World.Renderer.DrawImage(_monsterSpawnTexture, MonsterSpawn.Position);
             World.Renderer.DrawImage(_defensePointTexture, DefensePoint.Position);
         }

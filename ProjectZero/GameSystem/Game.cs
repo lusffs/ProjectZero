@@ -55,15 +55,21 @@ namespace ProjectZero.GameSystem
         public void Frame(GameTime gameTime)
         {
             _renderer.ClearScreen(Color.Pink);
+            DrawMouseCursor();
 
             _world.Update(gameTime);
-
-            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
-            {
-                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y));
-            }
         }
 
+        private void DrawMouseCursor()
+        {
+            // only draw if we are not touching the left/up border of the window.
+            // window managment will start drawing regular cursor at that point resulting
+            // in double pointer.
+            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
+            {
+                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y), forceDrawLast: true);
+            }
+        }
 
         private void MouseHandle(object sender, MouseEventArgs e)
         {

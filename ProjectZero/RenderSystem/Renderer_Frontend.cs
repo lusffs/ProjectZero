@@ -13,33 +13,33 @@ namespace ProjectZero.RenderSystem
     {
         public void ClearScreen(Color color)
         {
-            _commands.Add(new ClearColorCommand(color));
+            _commands.Add(new ClearColorCommand(color, _commands.Count));
         }
 
-        public void DrawImage(TextureHandle texture, Vector2 position)
+        public void DrawImage(TextureHandle texture, Vector2 position, bool forceDrawLast = false)
         {
             Texture2D t = (Texture2D)texture.Texture;
             Debug.Assert(t != null, "texture should be a handle for Texture2D");
-            _commands.Add(new DrawImageCommand(texture, position, null, null, _imageSpriteBatch));
+            _commands.Add(new DrawImageCommand(texture, position, null, null, _imageSpriteBatch, _commands.Count, forceDrawLast));
         }
 
         public void DrawImage(TextureHandle texture, Vector2 position, int width, int height)
         {
             Texture2D t = (Texture2D)texture.Texture;
             Debug.Assert(t != null, "texture should be a handle for Texture2D");
-            _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), null, _imageSpriteBatch));
+            _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), null, _imageSpriteBatch, _commands.Count));
         }
 
         public void DrawImage(TextureHandle texture, Vector2 position, int width, int height, Rectangle sourceRect)
         {
             Texture2D t = (Texture2D)texture.Texture;
             Debug.Assert(t != null, "texture should be a handle for Texture2D");
-            _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), sourceRect, _imageSpriteBatch));
+            _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), sourceRect, _imageSpriteBatch, _commands.Count));
         }
 
         public void DrawString(FontHandle font, string text, Vector2 position, Color color)
         {
-            _commands.Add(new DrawStringCommand(font, position, color, text, _textSpriteBatch));
+            _commands.Add(new DrawStringCommand(font, position, color, text, _textSpriteBatch, _commands.Count));
         }
     }
 }

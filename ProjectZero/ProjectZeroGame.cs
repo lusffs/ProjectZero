@@ -5,6 +5,8 @@ using XnaInput = Microsoft.Xna.Framework.Input;
 using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
 using ProjectZero.SoundSystem;
+using System.Diagnostics;
+using System;
 
 namespace ProjectZero
 {
@@ -25,6 +27,9 @@ namespace ProjectZero
             _soundRenderer = new SoundRenderer(Content);
             _input = new Input();
             _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
+
+            // need fix for now, else multiple render/sound commands.
+            IsFixedTimeStep = false;
         }
 
         /// <summary>
@@ -85,8 +90,11 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            _soundRenderer.Render(gameTime);            
+            _soundRenderer.Render(gameTime);
+            var t = Stopwatch.StartNew();
             _renderer.Render(gameTime);
+            t.Stop();
+            Console.WriteLine("Renderer: " + t.ElapsedMilliseconds + " ms");
 
             base.Draw(gameTime);
         }

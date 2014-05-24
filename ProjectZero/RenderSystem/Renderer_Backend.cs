@@ -134,30 +134,18 @@ namespace ProjectZero.RenderSystem
             private readonly Vector2 _position;
             private readonly Color _color;
             private readonly string _text;
-            private readonly int _addedIndex;
-
-            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, Layer layer, int addedIndex) : base(spriteBatch, layer)
+            
+            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, Layer layer) : base(spriteBatch, layer)
             {
                 _font = font;
                 _position = position;
                 _color = color;
                 _text = text;
-                _addedIndex = addedIndex;
-            }
-
-
-            private float SortValue
-            {
-                get
-                {
-                    return (int)(_position.X / Map.TileSize) + (int)(_position.Y / Map.TileSize) * Map.Rows;
-                }
             }
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
-                SpriteBatch.DrawString(_font.Font, _text, _position, _color, 0, Vector2.Zero, 0, SpriteEffects.None, depth);                
+                SpriteBatch.DrawString(_font.Font, _text, _position, _color);
             }
         }
     }

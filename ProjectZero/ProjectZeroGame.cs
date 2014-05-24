@@ -7,6 +7,7 @@ using ProjectZero.RenderSystem;
 using ProjectZero.SoundSystem;
 using System.Diagnostics;
 using System;
+using ProjectZero.Framework;
 
 namespace ProjectZero
 {
@@ -19,6 +20,9 @@ namespace ProjectZero
         private SoundRenderer _soundRenderer;
         private Input _input;
         private GameSystem.Game _game;
+        private FpsMeter _gameFpsMeter;
+        private FpsMeter _rendererFpsMeter;
+        private FontHandle _fpsMeterFont;
 
         public ProjectZeroGame()
         {
@@ -26,7 +30,8 @@ namespace ProjectZero
             _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
             _soundRenderer = new SoundRenderer(Content);
             _input = new Input();
-            _game = new GameSystem.Game(_renderer, _soundRenderer, _input);            
+            _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
+            _fpsMeterFont = _renderer.RegisterFont("fonts/console");            
         }
 
         /// <summary>
@@ -53,6 +58,9 @@ namespace ProjectZero
             _renderer.LoadContent(GraphicsDevice);
             _soundRenderer.LoadContent();
             _game.ContentLoaded();
+
+            _gameFpsMeter = new FpsMeter(_renderer, Color.Yellow, 0, _fpsMeterFont);
+            _rendererFpsMeter = new FpsMeter(_renderer, Color.Red, _fpsMeterFont.Font.LineSpacing, _fpsMeterFont);
         }
 
         /// <summary>
@@ -73,6 +81,8 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            _gameFpsMeter.Update(gameTime);
+
             // collect all input and handle it.
             _input.Frame(XnaInput.Keyboard.GetState(), XnaInput.Mouse.GetState());
             // run game frame for updating game state and generate new output.
@@ -87,10 +97,15 @@ namespace ProjectZero
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            _rendererFpsMeter.Update(gameTime);
+
+            _gameFpsMeter.Draw();
+            _rendererFpsMeter.Draw();
+
             _soundRenderer.Render(gameTime);
             _renderer.Render(gameTime);
             
-            base.Draw(gameTime);
+            base.Draw(gameTime);            
         }
     }
 }

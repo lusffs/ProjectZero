@@ -55,7 +55,7 @@ namespace ProjectZero.GameSystem
         }
 
         public void Frame(GameTime gameTime)
-        {
+        {            
             _soundRenderer.BeginFrame();
             _renderer.BeginFrame();
 

@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\Animation.cs" />
+    <Compile Include="Framework\FpsMeter.cs" />
     <Compile Include="Framework\PathFinding\Cell.cs" />
     <Compile Include="Framework\PathFinding\PathFinder.cs" />
     <Compile Include="GameSystem\Entities\BaseEntity.cs" />

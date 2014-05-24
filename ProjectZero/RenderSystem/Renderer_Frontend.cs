@@ -44,7 +44,7 @@ namespace ProjectZero.RenderSystem
 
         public void DrawString(FontHandle font, string text, Vector2 position, Color color, Layer layer)
         {
-            _commands.Add(new DrawStringCommand(font, position, color, text, _layers[(int)layer], layer, _commands.Count));
+            _commands.Add(new DrawStringCommand(font, position, color, text, _layers[(int)layer], layer));
         }
     }
 }

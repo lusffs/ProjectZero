@@ -26,15 +26,6 @@ namespace ProjectZero.GameSystem.Entities
 
         public override void Update(GameTime gameTime)
         {
-            // var nextPos = Velocity * gameTime
-            // if (nexPos >= path[currentPath])
-            // {
-            //      // i nästa frame ska detta ske.
-            //      Velocity = ...
-            //      Animation.Direct = ...
-            //      currentPath++
-            // }
-
             bool targetWillBeHit = Animation.IsPlaying && _path != null && TargetWillBeHit(gameTime);
             base.Update(gameTime);
             if (targetWillBeHit && Animation.IsPlaying)
@@ -57,13 +48,13 @@ namespace ProjectZero.GameSystem.Entities
             Velocity.X = direction.X * Speed;
             Velocity.Y = direction.Y * Speed;
 
-            if (Position.X + sizeFactor >= _path[_currentPathIndex].X)
+            if (Position.X + sizeFactor >= _path[_currentPathIndex].X * Map.TileSize)
             {
-                if (Position.Y + sizeFactor > _path[_currentPathIndex].Y)
+                if (Position.Y + sizeFactor > _path[_currentPathIndex].Y * Map.TileSize)
                 {
                     Animation.Direction = Framework.AnimationDirection.Up;
                 }
-                else if (Position.Y + sizeFactor < _path[_currentPathIndex].Y)
+                else if (Position.Y + sizeFactor < _path[_currentPathIndex].Y * Map.TileSize)
                 {
                     Animation.Direction = Framework.AnimationDirection.Down;
                 }
@@ -114,6 +105,8 @@ namespace ProjectZero.GameSystem.Entities
         {
             _path = path;
             _currentPathIndex = 0;
+            Animation.Play();
+
             float sizeFactor = (Map.TileSize * (Map.TileSize / (float)Animation.TileSize));
             Position.X = startPosition.X - sizeFactor;
             Position.Y = startPosition.Y - sizeFactor;
@@ -124,13 +117,13 @@ namespace ProjectZero.GameSystem.Entities
             Velocity.X = direction.X * Speed;
             Velocity.Y = direction.Y * Speed;
 
-            if (Position.X + sizeFactor >= path[0].X)
+            if (Position.X + sizeFactor >= path[0].X * Map.TileSize)
             {
-                if (Position.Y + sizeFactor> path[0].Y)
+                if (Position.Y + sizeFactor> path[0].Y * Map.TileSize)
                 {
                     Animation.Direction = Framework.AnimationDirection.Up;
                 }
-                else if (Position.Y + sizeFactor < path[0].Y)
+                else if (Position.Y + sizeFactor < path[0].Y * Map.TileSize)
                 {
                     Animation.Direction = Framework.AnimationDirection.Down;
                 }

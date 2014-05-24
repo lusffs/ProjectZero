@@ -28,7 +28,7 @@ namespace ProjectZero
             _input = new Input();
             _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
 
-            // need fix for now, else multiple render/sound commands.
+            // need fixed for now, else multiple render/sound commands.
             IsFixedTimeStep = false;
         }
 

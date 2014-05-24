@@ -16,7 +16,7 @@ namespace ProjectZero.RenderSystem
 
         public void Render(GameTime gameTime)
         {
-            _commands.Sort(new CommandComparer());
+            //_commands.Sort(new CommandComparer());
 
             foreach (var c in _commands)
             {
@@ -29,6 +29,11 @@ namespace ProjectZero.RenderSystem
         {
             public int Compare(Command x, Command y)
             {                
+                if (x == y)
+                {
+                    return 0;
+                }
+
                 ClearColorCommand clearX = x as ClearColorCommand;
                 ClearColorCommand clearY = y as ClearColorCommand;
                 if (clearX != null && clearY != null)
@@ -163,6 +168,13 @@ namespace ProjectZero.RenderSystem
             {
                 // TODO:    should include sort mode, blend state.
                 _spriteBatch.Begin();
+                float layerDepth = _position != null ?
+                        (_position.Value.X / Map.TileSize) + ((_position.Value.Y / Map.TileSize) * Map.Rows) :
+                        (_drawRect.Value.X / Map.TileSize + _drawRect.Value.Y / Map.TileSize * Map.Rows);
+                if (_forceDrawLast)
+                {
+                    layerDepth = float.MaxValue;
+                }
                 _spriteBatch.Draw((Texture2D)_texture.Texture, position: _position, drawRectangle: _drawRect, sourceRectangle: _sourceRect);
                 _spriteBatch.End();
             }

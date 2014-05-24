@@ -16,9 +16,9 @@ namespace ProjectZero.SoundSystem
             _commands.Clear();
         }
 
-        public void PlaySound(SoundHandle sound, float pan = 0)
+        public void PlaySound(SoundHandle sound, float volume = 0, float pan = 0)
         {
-            _commands.Add(new PlaySoundCommand(sound, SoundEffect.MasterVolume, pan: pan));
+            _commands.Add(new PlaySoundCommand(sound, volume: volume <= 0 ? SoundEffect.MasterVolume : volume, pan: pan));
         }        
     }
 }

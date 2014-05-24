@@ -48,7 +48,7 @@ namespace ProjectZero.GameSystem.Entities
             if (isAnimation)
             {
                 AssetFileName = assetFileName;
-                Animation = new Animation(World.Renderer, AssetFileName);
+                Animation = new Animation(World.Renderer, World.SoundRenderer, AssetFileName);
             }
             else
             {

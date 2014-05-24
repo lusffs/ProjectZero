@@ -54,6 +54,9 @@ namespace ProjectZero.GameSystem
 
         public void Frame(GameTime gameTime)
         {
+            _soundRenderer.BeginFrame();
+            _renderer.BeginFrame();
+
             _renderer.ClearScreen(Color.Pink);
             DrawMouseCursor();
 
@@ -67,7 +70,7 @@ namespace ProjectZero.GameSystem
             // in double pointer.
             if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
             {
-                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y), forceDrawLast: true);
+                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y), Layer.Last);
             }
         }
 

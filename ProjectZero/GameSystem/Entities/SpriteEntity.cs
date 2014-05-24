@@ -17,6 +17,8 @@ namespace ProjectZero.GameSystem.Entities
 
         public TextureHandle Image { get; set; }
 
+        public Layer Layer { get; set; }
+
         public int Width
         {
             get
@@ -41,7 +43,7 @@ namespace ProjectZero.GameSystem.Entities
             }
         }
 
-        public SpriteEntity(string assetFileName, World world, bool isAnimation = true) : base(world)
+        public SpriteEntity(string assetFileName, World world, bool isAnimation = true, Layer layer = Layer.Dynamic) : base(world)
         {
             if (isAnimation)
             {
@@ -53,6 +55,8 @@ namespace ProjectZero.GameSystem.Entities
                 AssetFileName = assetFileName;
                 Animation = null;
             }
+
+            Layer = layer;
         }
 
 
@@ -83,11 +87,11 @@ namespace ProjectZero.GameSystem.Entities
         {
             if (Animation != null)
             {
-                Animation.Update(Position, gameTime);
+                Animation.Update(Position, gameTime, Layer);
             }
             else
             {
-                World.Renderer.DrawImage(Image, Position);
+                World.Renderer.DrawImage(Image, Position, Layer);
             }
         }
     }

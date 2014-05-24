@@ -76,7 +76,7 @@ namespace ProjectZero.GameSystem
             {
                 foreach (var segment in _path)
                 {
-                    Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize));
+                    Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize), Layer.Path);
                 }                
             }
 

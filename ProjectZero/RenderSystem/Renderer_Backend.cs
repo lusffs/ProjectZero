@@ -27,15 +27,14 @@ namespace ProjectZero.RenderSystem
                         spriteBatch.End();
                     }
                     spriteBatch = c.SpriteBatch;
-                    spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+                    spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
                 }
                 c.Render(this, gameTime);                
             }
             if (spriteBatch != null)
             {
                 spriteBatch.End();
-            }
-            _commands.Clear();            
+            }            
         }
 
         private class CommandComparer : IComparer<Command>
@@ -47,60 +46,39 @@ namespace ProjectZero.RenderSystem
                     return 0;
                 }
 
-                // Clear always first.
-                if (x.SpriteBatch == null)
+                if (x.Layer < y.Layer)
                 {
                     return -1;
                 }
-                if (y.SpriteBatch == null)
+                else if (x.Layer > y.Layer)
                 {
                     return 1;
                 }
 
-                if (x.SpriteIndex < y.SpriteIndex)
-                {
-                    return -1;
-                }
-                else if (x.SpriteIndex > y.SpriteIndex)
-                {
-                    return 1;
-                }
-
-                /*if (x.AddedIndex < y.AddedIndex)
-                {
-                    return -1;
-                }
-                else if (x.AddedIndex > y.AddedIndex)
-                {
-                    return 1;
-                }*/
                 return 0;
             }
         }
 
         private abstract class Command
         {
-            public Command(SpriteBatch spriteBatch, int spriteIndex, int addedIndex)
+            public Command(SpriteBatch spriteBatch, Layer layer)
             {
                 SpriteBatch = spriteBatch;
-                SpriteIndex = spriteIndex;
-                AddedIndex = addedIndex;
+                Layer = layer; 
             }
 
             public abstract void Render(Renderer renderer, GameTime gameTime);
 
             public SpriteBatch SpriteBatch { get; private set; }
 
-            public int SpriteIndex { get; private set; }
-
-            public int AddedIndex { get; private set; }
+            public Layer Layer { get; private set; }            
         }
 
         private class ClearColorCommand : Command
         {
             private readonly Color _color;
 
-            public ClearColorCommand(Color color) : base(null, int.MinValue, int.MinValue)
+            public ClearColorCommand(Color color) : base(null, Layer.Clear)
             {
                 _color = color;
             }
@@ -117,9 +95,9 @@ namespace ProjectZero.RenderSystem
             private readonly TextureHandle _texture;
             private readonly Vector2? _position;
             private readonly Rectangle? _drawRect;
-            private readonly Rectangle? _sourceRect;            
-            // for mouse pointer and so on.
-            private readonly bool _forceDrawLast;
+            private readonly Rectangle? _sourceRect;
+            private readonly int _addedIndex;
+
 
             private float SortValue
             {
@@ -134,19 +112,18 @@ namespace ProjectZero.RenderSystem
                 }
             }
 
-            public DrawImageCommand(TextureHandle texture, Vector2? position, Rectangle? drawRect, Rectangle? sourceRect, SpriteBatch spriteBatch, int spriteIndex, int addedIndex, bool forceDrawLast = false) : base(spriteBatch, spriteIndex, addedIndex)
+            public DrawImageCommand(TextureHandle texture, Vector2? position, Rectangle? drawRect, Rectangle? sourceRect, SpriteBatch spriteBatch, Layer layer, int addedIndex) : base(spriteBatch, layer)
             {
                 _texture = texture;
                 _position = position;
                 _drawRect = drawRect;
                 _sourceRect = sourceRect;
-                _forceDrawLast = forceDrawLast;                
+                _addedIndex = addedIndex;               
             }
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - AddedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
-                //float depth = SortValue / (Map.Columns * Map.Rows);
+                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;                
                 SpriteBatch.Draw((Texture2D)_texture.Texture, position: _position, drawRectangle: _drawRect, sourceRectangle: _sourceRect, depth: depth);                
             }
         }
@@ -157,13 +134,15 @@ namespace ProjectZero.RenderSystem
             private readonly Vector2 _position;
             private readonly Color _color;
             private readonly string _text;
+            private readonly int _addedIndex;
 
-            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, int spriteIndex, int addedIndex) : base(spriteBatch, spriteIndex, addedIndex)
+            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, Layer layer, int addedIndex) : base(spriteBatch, layer)
             {
                 _font = font;
                 _position = position;
                 _color = color;
-                _text = text;            
+                _text = text;
+                _addedIndex = addedIndex;
             }
 
 
@@ -171,15 +150,14 @@ namespace ProjectZero.RenderSystem
             {
                 get
                 {
-                    float totalGridCells = Map.Rows * Map.Columns;
-
-                    return (_position.X / Map.TileSize) + (_position.Y / Map.TileSize * Map.Rows);// + totalGridCells * _addedIndex;                    
+                    return (int)(_position.X / Map.TileSize) + (int)(_position.Y / Map.TileSize) * Map.Rows;
                 }
             }
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                SpriteBatch.DrawString(_font.Font, _text, _position, _color);                
+                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
+                SpriteBatch.DrawString(_font.Font, _text, _position, _color, 0, Vector2.Zero, 0, SpriteEffects.None, depth);                
             }
         }
     }

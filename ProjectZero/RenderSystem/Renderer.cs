@@ -17,15 +17,7 @@ namespace ProjectZero.RenderSystem
 
         public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
-        /// <summary>
-        /// All DrawImage uses this.
-        /// </summary>
-        private SpriteBatch _imageSpriteBatch;
-
-        /// <summary>
-        /// All DrawText uses this.
-        /// </summary>
-        private SpriteBatch _textSpriteBatch;
+        private SpriteBatch[] _layers = new SpriteBatch[(int)Layer.Last + 1];
 
         public Renderer(GraphicsDeviceManager graphicsDeviceManager, ContentManager contentManager)
         {

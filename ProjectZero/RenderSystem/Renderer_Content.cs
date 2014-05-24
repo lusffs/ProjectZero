@@ -74,8 +74,10 @@ namespace ProjectZero.RenderSystem
         {
             InitContent(graphicsDevice);
 
-            _imageSpriteBatch = new SpriteBatch(GraphicsDevice);
-            _textSpriteBatch = new SpriteBatch(GraphicsDevice);
+            for (int i = (int)Layer.Map; i < (int)Layer.Last + 1; i++)
+            {
+                _layers[i] = new SpriteBatch(GraphicsDevice);
+            }
 
             foreach (var t in _contents)
             {
@@ -85,11 +87,11 @@ namespace ProjectZero.RenderSystem
 
         public void UnloadContent()
         {
-            _imageSpriteBatch.Dispose();
-            _imageSpriteBatch = null;
-
-            _textSpriteBatch.Dispose();
-            _textSpriteBatch = null;
+            for (int i = (int)Layer.Map; i < (int)Layer.Last + 1; i++)
+            {
+                _layers[i].Dispose();
+                _layers[i] = null;
+            }
 
             foreach (var t in _contents)
             {

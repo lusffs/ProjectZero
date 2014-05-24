@@ -100,10 +100,10 @@ namespace ProjectZero.GameSystem
         public void Update(GameTime gameTime)
         {
             ForAllGridCells(x => x.Update(gameTime));
-            
+
             // TODO:    should be through entity update.
-            World.Renderer.DrawImage(_monsterSpawnTexture, MonsterSpawn.Position);
-            World.Renderer.DrawImage(_defensePointTexture, DefensePoint.Position);
+            World.Renderer.DrawImage(_monsterSpawnTexture, MonsterSpawn.Position, Layer.Fixed);
+            World.Renderer.DrawImage(_defensePointTexture, DefensePoint.Position, Layer.Fixed);
         }
 
         public void ContentLoaded()
@@ -131,8 +131,8 @@ namespace ProjectZero.GameSystem
         }
         private Dictionary<string, Func<World, int, int, BaseEntity>> _factory = new Dictionary<string, Func<World, int, int, BaseEntity>>()
         {
-            { "g", (world, x, y) => Create(new SpriteEntity("images/tiles/grass.png", world, isAnimation: false), world, x, y, TileSize)},
-            { "rg", (world, x, y) => Create(new SpriteEntity("images/tiles/rock_in_grass.png", world, isAnimation: false) { Solid = true }, world, x, y, TileSize)}
+            { "g", (world, x, y) => Create(new SpriteEntity("images/tiles/grass.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "rg", (world, x, y) => Create(new SpriteEntity("images/tiles/rock_in_grass.png", world, isAnimation: false, layer: Layer.Map) { Solid = true }, world, x, y, TileSize)}
         };
 
         private static BaseEntity Create(BaseEntity e, World world, int x, int y, int tileSize)

@@ -47,7 +47,7 @@ namespace ProjectZero.Framework
 
         private int _currentFrame = 0;
 
-        public void Update(Vector2 position, GameTime gameTime)
+        public void Update(Vector2 position, GameTime gameTime, Layer layer)
         {
             if (_playing)
             {
@@ -58,7 +58,7 @@ namespace ProjectZero.Framework
                 _currentFrame = 0;
             }
             _renderer.DrawImage(_textureHandle, position, _tileSize, _tileSize,
-                new Rectangle(_currentFrame * _tileSize, (int)_direction * _tileSize, _tileSize, _tileSize));
+                new Rectangle(_currentFrame * _tileSize, (int)_direction * _tileSize, _tileSize, _tileSize), layer);
         }        
 
         public void Play()

@@ -11,6 +11,11 @@ namespace ProjectZero.SoundSystem
 {
     public partial class SoundRenderer
     {
+        public void BeginFrame()
+        {
+            _commands.Clear();
+        }
+
         public void PlaySound(SoundHandle sound, float pan = 0)
         {
             _commands.Add(new PlaySoundCommand(sound, SoundEffect.MasterVolume, pan: pan));

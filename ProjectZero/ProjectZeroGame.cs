@@ -26,10 +26,7 @@ namespace ProjectZero
             _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
             _soundRenderer = new SoundRenderer(Content);
             _input = new Input();
-            _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
-
-            // need fixed for now, else multiple render/sound commands.
-            IsFixedTimeStep = false;
+            _game = new GameSystem.Game(_renderer, _soundRenderer, _input);            
         }
 
         /// <summary>

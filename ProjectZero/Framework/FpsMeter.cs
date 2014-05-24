@@ -54,7 +54,7 @@ namespace ProjectZero.Framework
                 }
 
                 long fps = (1000000 * FrameCount) / total;
-                //fps = (fps + 500) / 1000;
+                fps = fps + 500 / 1000;
 
                 _fpsString = string.Format("{0} FPS", fps);                
             }

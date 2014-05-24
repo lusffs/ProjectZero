@@ -11,9 +11,9 @@ namespace ProjectZero.GameSystem.Entities
 {
     public class SpriteEntity : StaticEntity
     {
-        public string AssetFileName { get; private set; }
+        public string AssetFileName { get; protected set; }
 
-        public Animation Animation { get; private set; }
+        public Animation Animation { get; protected set; }
 
         public TextureHandle Image { get; set; }
 

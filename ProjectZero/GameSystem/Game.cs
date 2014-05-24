@@ -39,12 +39,14 @@ namespace ProjectZero.GameSystem
 
         TextureHandle _mousePointer;
         Point _mousePosition;
+        TextureHandle _mouseTower;
 
         public void RegisterContent()
         {
             // register any content here through sub system 
             _world.RegisterContent();            
             _mousePointer = _renderer.RegisterTexture2D("images/ui/cursor.png");
+            _mouseTower = _renderer.RegisterTexture2D("images/ui/tower_marker.png");
         }
 
         public void ContentLoaded()
@@ -57,13 +59,36 @@ namespace ProjectZero.GameSystem
             _renderer.ClearScreen(Color.Pink);
 
             _world.Update(gameTime);
+            DrawMouse();
+            DrawTowerMarkerOrTowerRadius();
+        }
 
+        private void DrawTowerMarkerOrTowerRadius()
+        {
             if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
             {
-                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y));
+                foreach (var tower in _world.Entities.OfType<Tower>())
+                {
+                    if (tower.ShouldDrawRange(_mousePosition))
+                    {
+                        return;
+                    }
+                }
+
+                float sizeFactor = (Map.TileSize * (Map.TileSize / (float)_mouseTower.Width));
+                _renderer.DrawImage(_mouseTower,
+                    new Vector2(_mousePosition.X / Map.TileSize * Map.TileSize - sizeFactor,
+                                _mousePosition.Y / Map.TileSize * Map.TileSize - sizeFactor));
             }
         }
 
+        private void DrawMouse()
+        {
+            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
+            {
+                _renderer.DrawImage(_mousePointer, new Vector2(_mousePosition.X, _mousePosition.Y));                
+            }
+        }
 
         private void MouseHandle(object sender, MouseEventArgs e)
         {

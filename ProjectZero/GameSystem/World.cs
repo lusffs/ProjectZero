@@ -32,7 +32,7 @@ namespace ProjectZero.GameSystem
 
         public void Initialize()
         {
-            Map = new Map("maps/test", this);
+            Map = new Map("maps/test", this);            
         }
 
         private TextureHandle _segmentTexture;
@@ -40,8 +40,8 @@ namespace ProjectZero.GameSystem
         private bool _mapHasNewBlockingEntity = true;
         private List<Point> _path = new List<Point>();
 
-        private TextureHandle _towerTexture;
-
+        private Tower _tower;
+        
         public void RegisterContent()
         {
             Map.RegisterContent();
@@ -51,13 +51,15 @@ namespace ProjectZero.GameSystem
             Entities.Add(new Monster("slime", this));
             Entities[0].RegisterContent();
 
-            _towerTexture = Renderer.RegisterTexture2D("images/tower.png");
+            _tower = new Tower(this);
+            _tower.RegisterContent();
         }
 
         public void ContentLoaded()
         {
             Map.ContentLoaded();
-            Entities.ForEach(x => x.ContentLoaded());            
+            Entities.ForEach(x => x.ContentLoaded());
+            _tower.ContentLoaded();         
         }
 
         public void Update(GameTime gameTime)
@@ -90,7 +92,15 @@ namespace ProjectZero.GameSystem
                 return;
             }
 
-            ((Monster)Entities[Entities.Count - 1]).WalkPath(_path, Map.MonsterSpawn.Position);
+            foreach (var monster in Entities.OfType<Monster>())
+            {
+                monster.WalkPath(_path, Map.MonsterSpawn.Position);
+            }
+
+            foreach (var tower in Entities.OfType<Tower>())
+            {
+                tower.StartDefending();
+            }
         }
 
         private void GetMonsterSpawnAndDefensePoints(out Point monsterSpawn, out Point defensePoint)
@@ -123,12 +133,7 @@ namespace ProjectZero.GameSystem
                 return;
             }
 
-            Entities.Insert(0, new SpriteEntity("images/tower.png", this, false)
-            {
-                Image = _towerTexture,
-                Solid = true,
-                Position = new Vector2(position.X * Map.TileSize - Map.TileSize * (Map.TileSize / (float)_towerTexture.Width), position.Y * Map.TileSize - Map.TileSize * (Map.TileSize / (float)_towerTexture.Height))
-            });
+            Entities.Add(_tower.Clone(new Vector2(position.X, position.Y)));
         }
     }
 }

@@ -88,11 +88,8 @@ namespace ProjectZero
         protected override void Draw(GameTime gameTime)
         {
             _soundRenderer.Render(gameTime);
-            var t = Stopwatch.StartNew();
             _renderer.Render(gameTime);
-            t.Stop();
-            Console.WriteLine("Renderer: " + t.ElapsedMilliseconds + " ms");
-
+            
             base.Draw(gameTime);
         }
     }

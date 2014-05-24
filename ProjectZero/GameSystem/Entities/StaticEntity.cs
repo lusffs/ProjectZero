@@ -17,5 +17,9 @@ namespace ProjectZero.GameSystem.Entities
         {            
         }
 
+        public override BaseEntity Clone(Vector2 position)
+        {
+            return new StaticEntity(World) { Position = position, Solid = Solid };
+        }
     }
 }

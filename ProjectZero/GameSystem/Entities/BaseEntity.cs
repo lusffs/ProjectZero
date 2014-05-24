@@ -35,6 +35,8 @@ namespace ProjectZero.GameSystem.Entities
             
         }
 
+        public abstract BaseEntity Clone(Vector2 position);
+
         public bool Solid { get; set; }
     }
 }

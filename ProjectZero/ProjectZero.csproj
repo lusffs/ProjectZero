@@ -55,6 +55,7 @@
     <Compile Include="GameSystem\Entities\Movable.cs" />
     <Compile Include="GameSystem\Entities\SpriteEntity.cs" />
     <Compile Include="GameSystem\Entities\StaticEntity.cs" />
+    <Compile Include="GameSystem\Entities\Tower.cs" />
     <Compile Include="GameSystem\Game.cs" />
     <Compile Include="GameSystem\Map.cs" />
     <Compile Include="GameSystem\World.cs" />
@@ -107,10 +108,19 @@
     <Content Include="Content\images\path_marker1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\images\projectiles\arrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\images\start.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\images\tiles\rock_in_grass.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\images\ui\radius.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\images\ui\tower_marker.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\images\tower_magic_overlay.png" />
@@ -150,7 +160,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Content\images\tower\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

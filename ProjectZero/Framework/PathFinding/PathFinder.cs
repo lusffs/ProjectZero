@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using ProjectZero.GameSystem;
 
 namespace ProjectZero.Framework.PathFinding
 {
@@ -12,210 +14,177 @@ namespace ProjectZero.Framework.PathFinding
     public static class PathFinder
     {
 
-        private static int _numColumnsMinusOne;
-        private static int _numRowsMinusOne;
-        private static bool _targetHit;
+        private static Cell[,] _grid;
         private static Point _target;
+        private static Point _start;
+        private static int _gridRowsMinusOne;
+        private static int _gridColsMinusOne;
 
-        // Coordinates are in pairs of "Y, X", i.e. "row, column"
-        //
-        // Possible usage:
-        // 1. Query for shortest path when player is ready to start round.
-        //    2.1 If null is returned, there is no path for enemies and the mob turn can't begin
-        //    2.2 else, a path of coordinates in the grid is returned
-        public static List<Point> GetShortestPath(Cell[,] grid, Point start, Point target)
-        {
-            Setup(grid, target);
 
-            // Reset distances to cells
-            ClearMap(grid);
-
-            CalculatePaths(grid, start.Y, start.X);
-
-            if (PathExists(grid, target))
-            {
-                return GetShortestPath(grid, target);
-            }
-
-            return null;
-        }
-
-        private static void Setup(Cell[,] grid, Point target)
-        {
-            _target = target;
-            _targetHit = false;
-            _numColumnsMinusOne = grid.GetLength(1) - 1;
-            _numRowsMinusOne = grid.GetLength(0) - 1;
+        public static List<Point> GetPath(Cell[,] grid, Point start, Point target)
+        {            
+            Setup(grid, start, target);
+            var path = CalculatePath();
+            return path;
         }
 
 
-        // Could possibly be useful if run when player tries to build in a location in order to
-        // prevent a complete block of the target
         public static bool PathExists(Cell[,] grid, Point start, Point target)
         {
-            Setup(grid, target);
-
-            ClearMap(grid);
-            CalculatePaths(grid, start.Y, start.X);
-            return PathExists(grid, target);            
+            Setup(grid, start, target);
+            var path = CalculatePath();
+            return (path != null && path.Count > 0);
         }
 
-        private static void ClearMap(Cell[,] grid)
+        private static void Setup(Cell[,] grid, Point start, Point target)
         {
-            for (var row = 0; row <= _numRowsMinusOne; row++)
+            _grid = grid;
+            _target = target;
+            _start = start;
+            _gridRowsMinusOne = Map.Rows - 1;
+            _gridColsMinusOne = Map.Columns - 1;
+
+            for (var row = 0; row <= _gridRowsMinusOne; row++)
             {
-                for (var col = 0; col <= _numColumnsMinusOne; col++)
+                for (var col = 0; col <= _gridColsMinusOne; col++)
                 {
                     grid[row, col].DistanceFromStart = 0;
                 }
             }
         }
 
-        private static bool PathExists(Cell[,] grid, Point target)
+        private static List<Point> CalculatePath()
         {
-            return grid[target.Y, target.X].DistanceFromStart > 0;
-        }
+            var reachable = GetNeighbours(_start);
+            var explored = new List<Cell>();
 
-        private static List<Point> GetShortestPath(Cell[,] grid, Point target)
-        {
-            var path = new List<Point> { target };
-
-            while (true)
+            while (reachable.Count > 0)
             {
-                var cellPosition = GetBestConnection(grid, target.Y, target.X);
+                // Choose some node we know how to reach.
+                var node = ChooseNode(reachable);
 
-                if (grid[cellPosition.Y, cellPosition.X].IsStart)
-                    break;
+                // Target hit, return!
+                if (_grid[node.Y, node.X].IsTarget)
+                {
+                    return BuildPath();
+                }
 
-                target = new Point(cellPosition.X, cellPosition.Y);
-                path.Add(target);
+                // Let's not do twings more than one time..
+                reachable.Remove(reachable.First(n => n.X == node.X && n.Y == node.Y));
+                explored.Add(_grid[node.Y, node.X]);
 
+                //Where can we get from here that we haven't explored before?                
+                var newReachable = GetNeighbours(node).Where(point => !explored.Contains(_grid[point.Y, point.X])).ToList();
 
+                foreach (var point in newReachable)
+                {
+                    if (reachable.Count(p => p.X == point.X && p.Y == point.Y) == 0)
+                    {
+                        reachable.Add(new Point(point.X, point.Y));
+                    }
+
+                    if (_grid[node.Y, node.X].DistanceFromStart + 1 < _grid[point.Y, point.X].DistanceFromStart ||
+                        _grid[point.Y, point.X].DistanceFromStart == 0)
+                    {
+                        _grid[point.Y, point.X].Previous = node;
+                        _grid[point.Y, point.X].DistanceFromStart = _grid[node.Y, node.X].DistanceFromStart + 1;
+                    }
+                }
             }
 
+            return null;
+        }
+
+        private static List<Point> GetNeighbours(Point node)
+        {
+            var neighbours = new List<Point>();
+            var neighbour = new Point(node.X + 1, node.Y);
+            if (IsLegalStep(neighbour))
+            {
+                neighbours.Add(new Point(neighbour.X, neighbour.Y));
+            }
+            neighbour = new Point(node.X - 1, node.Y);
+            if (IsLegalStep(neighbour))
+            {
+                neighbours.Add(new Point(neighbour.X, neighbour.Y));
+            }
+            neighbour = new Point(node.X, node.Y + 1);
+            if (IsLegalStep(neighbour))
+            {
+                neighbours.Add(new Point(neighbour.X, neighbour.Y));
+            }
+            neighbour = new Point(node.X, node.Y - 1);
+            if (IsLegalStep(neighbour))
+            {
+                neighbours.Add(new Point(neighbour.X, neighbour.Y));
+            }
+
+            return neighbours;
+        }
+
+
+
+        private static Point ChooseNode(IEnumerable<Point> reachable)
+        {
+            var minCost = int.MaxValue;
+            Point? bestNode = null;
+            
+            foreach (var node in reachable)
+            {
+                var costForNode = _grid[node.Y, node.X].DistanceFromStart;
+                var costNodeToGoal = DistanceBetweenPoints(new Point(node.X, node.Y), _target);
+                var totalCost = costForNode + costNodeToGoal;
+
+                if (minCost > totalCost)
+                {
+                    minCost = totalCost;
+                    bestNode = new Point(node.X, node.Y);
+                }
+            }
+            if (!bestNode.HasValue)
+            {
+                throw new NoNullAllowedException("best node returned as null, not valid...");                
+            }
+            return bestNode.Value;
+        }
+
+        private static List<Point> BuildPath()
+        {
+            var path = new List<Point>();
+            Point? nodeInPath = new Point(_target.X, _target.Y);
+            while (true)
+            {
+                path.Add(nodeInPath.Value);
+
+                nodeInPath = _grid[nodeInPath.Value.Y, nodeInPath.Value.X].Previous.Value;
+                if (_grid[nodeInPath.Value.Y, nodeInPath.Value.X].Previous == null)
+                {
+                    path.Add(nodeInPath.Value);
+                    break;
+                }
+            }
+            path.Add(_start);
             path.Reverse();
+
             return path;
         }
 
-        private static void CalculatePaths(Cell[,] grid, int currentRowIndex, int currentColIndex)
+        private static int DistanceBetweenPoints(Point a, Point b)
         {
-            var cell = grid[currentRowIndex, currentColIndex];
-            if (cell.IsTarget)
-            {
-                _targetHit = true;
-            }
-            if (_targetHit)
-            {
-                return;
-            }
-
-            // Some A* heuristics.. 
-            var openNeighbours = GetNextSteps(grid, currentRowIndex, currentColIndex).ToList();
-            //target
-            CalcAbsDistForCells(grid, openNeighbours, _target);
-            openNeighbours = openNeighbours.OrderBy(x => grid[x.Y, x.X].AbsDistFromTarget).ToList();
-
-            foreach (var openNeighbour in openNeighbours)
-            {
-                grid[openNeighbour.Y, openNeighbour.X].DistanceFromStart = cell.DistanceFromStart + 1;
-                CalculatePaths(grid, openNeighbour.Y, openNeighbour.X);
-            }
+            return Math.Abs(a.Y - b.Y) + Math.Abs(a.X - b.X);
         }
 
-        private static void CalcAbsDistForCells(Cell[,] grid, IEnumerable<Point> neighbours, Point target)
+        private static bool IsLegalStep(Point node)
         {
-            foreach (var neighbour in neighbours)
-            {
-                grid[neighbour.Y, neighbour.X].AbsDistFromTarget = grid[neighbour.Y, neighbour.X].DistanceFromStart + Math.Abs(neighbour.X - target.X) + Math.Abs(neighbour.Y - target.Y);
-            }
+            return CellWithinGridBounds(node) && !_grid[node.Y, node.X].IsBlocked;
         }
 
-        private static Point GetBestConnection(Cell[,] grid, int rowIndex, int colIndex)
+        private static bool CellWithinGridBounds(Point node)
         {
-            var validNeighbours = new List<Point>();
-
-            if (IsLegalStep(grid, rowIndex - 0, colIndex - 1))
-            {
-                validNeighbours.Add(new Point(colIndex - 1, rowIndex));
-            }
-            if (IsLegalStep(grid, rowIndex - 1, colIndex - 0))
-            {
-                validNeighbours.Add(new Point(colIndex, rowIndex - 1));
-            }
-            if (IsLegalStep(grid, rowIndex + 1, colIndex - 0))
-            {
-                validNeighbours.Add(new Point(colIndex, rowIndex + 1));
-            }
-            if (IsLegalStep(grid, rowIndex - 0, colIndex + 1))
-            {
-                validNeighbours.Add(new Point(colIndex + 1, rowIndex));
-            }
-
-            var orderedNeighbours = validNeighbours.OrderBy(x => grid[x.Y, x.X].DistanceFromStart);
-
-            
-            return orderedNeighbours.First(y => grid[y.Y, y.X].DistanceFromStart > 0 || grid[y.Y, y.X].IsStart);
-            
-        }
-
-        private static IEnumerable<Point> GetNextSteps(Cell[,] grid, int rowIndex, int colIndex)
-        {
-            var openNeighbours = new List<Point>();
-
-            if (ShouldMove(grid, rowIndex - 0, colIndex - 1, grid[rowIndex, colIndex].DistanceFromStart))
-            {
-                openNeighbours.Add(new Point(colIndex - 1, rowIndex));
-            }
-            if (ShouldMove(grid, rowIndex - 1, colIndex - 0, grid[rowIndex, colIndex].DistanceFromStart))
-            {
-                openNeighbours.Add(new Point(colIndex, rowIndex - 1));
-            }
-            if (ShouldMove(grid, rowIndex + 1, colIndex - 0, grid[rowIndex, colIndex].DistanceFromStart))
-            {
-                openNeighbours.Add(new Point(colIndex, rowIndex + 1));
-            }
-            if (ShouldMove(grid, rowIndex - 0, colIndex + 1, grid[rowIndex, colIndex].DistanceFromStart))
-            {
-                openNeighbours.Add(new Point(colIndex + 1, rowIndex));
-            }
-
-            return openNeighbours;
-        }
-
-        private static bool ShouldMove(Cell[,] grid, int row, int col, int currentDistance)
-        {
-            if (!IsLegalStep(grid, row, col))
-                return false;
-
-            // Target is always possible next step, starting point is never
-            var cell = grid[row, col];
-            if (cell.IsTarget)
-                return true;
-            if (cell.IsStart)
-                return false;
-
-            // Cell can be reached with new lower amount of steps
-            if (IsShorterPath(currentDistance, cell))
-                return true;
-
-            return false;
-        }
-
-        private static bool IsShorterPath(int currentDistance, Cell cell)
-        {
-            return (cell.DistanceFromStart == 0 || cell.DistanceFromStart > currentDistance + 1);
-        }
-
-        private static bool IsLegalStep(Cell[,] grid, int row, int col)
-        {
-            return CellWithinGridBounds(row, col) && !grid[row, col].IsBlocked;
-        }
-
-        private static bool CellWithinGridBounds(int row, int col)
-        {
-            if (row < 0 || col < 0 || (col > _numColumnsMinusOne || row > _numRowsMinusOne))
+            if (node.Y < 0 || node.X < 0 || (node.Y > _gridRowsMinusOne || node.X > _gridColsMinusOne))
                 return false;
             return true;
         }
+
     }
 }

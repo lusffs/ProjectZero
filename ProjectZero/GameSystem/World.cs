@@ -70,7 +70,7 @@ namespace ProjectZero.GameSystem
             {
                 Point start, end;
                 GetMonsterSpawnAndDefensePoints(out start, out end);
-                _path = PathFinder.GetShortestPath(Map.Cells, start, end);                
+                _path = PathFinder.GetPath(Map.Cells, start, end);                
                 _mapHasNewBlockingEntity = false;
             }
             

@@ -9,6 +9,6 @@ namespace ProjectZero.Framework.PathFinding
         public bool IsBlocked { get; set; }
         public int DistanceFromStart { get; set; }
         public int AbsDistFromTarget { get; set; }
-        public Point? Previous { get; set; }
+        public Point Previous { get; set; }
     }
 }

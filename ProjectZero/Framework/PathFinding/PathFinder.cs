@@ -7,19 +7,13 @@ using ProjectZero.GameSystem;
 
 namespace ProjectZero.Framework.PathFinding
 {
-    // Fuck mocking?
-    // Yes, proberly
-    //       |
-    //       v
     public static class PathFinder
     {
-
         private static Cell[,] _grid;
         private static Point _target;
         private static Point _start;
         private static int _gridRowsMinusOne;
         private static int _gridColsMinusOne;
-
 
         public static List<Point> GetPath(Cell[,] grid, Point start, Point target)
         {            
@@ -27,7 +21,6 @@ namespace ProjectZero.Framework.PathFinding
             var path = CalculatePath();
             return path;
         }
-
 
         public static bool PathExists(Cell[,] grid, Point start, Point target)
         {
@@ -55,7 +48,7 @@ namespace ProjectZero.Framework.PathFinding
 
         private static List<Point> CalculatePath()
         {
-            var reachable = GetNeighbours(_start);
+            var reachable = new List<Point> { _start };
             var explored = new List<Cell>();
 
             while (reachable.Count > 0)
@@ -69,11 +62,11 @@ namespace ProjectZero.Framework.PathFinding
                     return BuildPath();
                 }
 
-                // Let's not do twings more than one time..
+                // Been there done that..
                 reachable.Remove(reachable.First(n => n.X == node.X && n.Y == node.Y));
                 explored.Add(_grid[node.Y, node.X]);
 
-                //Where can we get from here that we haven't explored before?                
+                // Where can we get from here that we haven't explored before?                
                 var newReachable = GetNeighbours(node).Where(point => !explored.Contains(_grid[point.Y, point.X])).ToList();
 
                 foreach (var point in newReachable)
@@ -95,7 +88,7 @@ namespace ProjectZero.Framework.PathFinding
             return null;
         }
 
-        private static List<Point> GetNeighbours(Point node)
+        private static IEnumerable<Point> GetNeighbours(Point node)
         {
             var neighbours = new List<Point>();
             var neighbour = new Point(node.X + 1, node.Y);
@@ -121,8 +114,6 @@ namespace ProjectZero.Framework.PathFinding
 
             return neighbours;
         }
-
-
 
         private static Point ChooseNode(IEnumerable<Point> reachable)
         {
@@ -151,19 +142,18 @@ namespace ProjectZero.Framework.PathFinding
         private static List<Point> BuildPath()
         {
             var path = new List<Point>();
-            Point? nodeInPath = new Point(_target.X, _target.Y);
+            var nodeInPath = new Point(_target.X, _target.Y);
+           
             while (true)
             {
-                path.Add(nodeInPath.Value);
-
-                nodeInPath = _grid[nodeInPath.Value.Y, nodeInPath.Value.X].Previous.Value;
-                if (_grid[nodeInPath.Value.Y, nodeInPath.Value.X].Previous == null)
+                path.Add(nodeInPath);
+                
+                if (_grid[nodeInPath.Y, nodeInPath.X].IsStart)
                 {
-                    path.Add(nodeInPath.Value);
                     break;
                 }
+                nodeInPath = _grid[nodeInPath.Y, nodeInPath.X].Previous;
             }
-            path.Add(_start);
             path.Reverse();
 
             return path;
@@ -185,6 +175,5 @@ namespace ProjectZero.Framework.PathFinding
                 return false;
             return true;
         }
-
     }
 }

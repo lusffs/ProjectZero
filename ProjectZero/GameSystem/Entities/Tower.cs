@@ -69,7 +69,7 @@ namespace ProjectZero.GameSystem.Entities
             position += _sizeOffset;
             // center of tile - range/radius * tileSize.
             position -= Range * tileSize;
-            World.Renderer.DrawImage(_rangeTexture, position, (int)(Range * 2 * Map.TileSize), (int)(Range * 2 * Map.TileSize), Layer);
+            World.Renderer.DrawImage(_rangeTexture, position, (int)(Range * 2 * Map.TileSize), (int)(Range * 2 * Map.TileSize), Layer.Last);
         }
 
         public bool ShouldDrawRange(Point mousePosition)

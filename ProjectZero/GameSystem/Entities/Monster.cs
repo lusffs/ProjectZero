@@ -26,6 +26,11 @@ namespace ProjectZero.GameSystem.Entities
 
         public override void Update(GameTime gameTime)
         {
+            if (!IsVisible)
+            {
+                return;
+            }
+
             bool targetWillBeHit = Animation.IsPlaying && _path != null && TargetWillBeHit(gameTime);
             base.Update(gameTime);
             if (targetWillBeHit && Animation.IsPlaying)

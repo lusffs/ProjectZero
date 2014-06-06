@@ -48,7 +48,7 @@ namespace ProjectZero.GameSystem
 
             _segmentTexture = Renderer.RegisterTexture2D("images/path_marker1.png");
 
-            Entities.Add(new Monster("slime", this));
+            Entities.Add(new Monster("slime", this) { IsVisible = false });
             Entities[0].RegisterContent();
 
             _tower = new Tower(this);
@@ -94,6 +94,7 @@ namespace ProjectZero.GameSystem
 
             foreach (var monster in Entities.OfType<Monster>())
             {
+                monster.IsVisible = true;
                 monster.WalkPath(_path, Map.MonsterSpawn.Position);
             }
 

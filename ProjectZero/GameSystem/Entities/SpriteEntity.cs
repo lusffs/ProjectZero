@@ -19,6 +19,8 @@ namespace ProjectZero.GameSystem.Entities
 
         public Layer Layer { get; set; }
 
+        public bool IsVisible { get;set; }
+
         public int Width
         {
             get
@@ -45,6 +47,8 @@ namespace ProjectZero.GameSystem.Entities
 
         public SpriteEntity(string assetFileName, World world, bool isAnimation = true, Layer layer = Layer.Dynamic) : base(world)
         {
+            IsVisible = true;
+
             if (isAnimation)
             {
                 AssetFileName = assetFileName;
@@ -85,6 +89,11 @@ namespace ProjectZero.GameSystem.Entities
 
         public override void Update(GameTime gameTime)
         {
+            if (!IsVisible)
+            {
+                return;
+            }
+
             if (Animation != null)
             {
                 Animation.Update(Position, gameTime, Layer);

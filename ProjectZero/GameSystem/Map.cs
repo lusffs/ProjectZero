@@ -56,7 +56,7 @@ namespace ProjectZero.GameSystem
                 while (line != null)
                 {
                     List<BaseEntity> columns = new List<BaseEntity>();
-                    string[] typeAndNumberOfColumns = line.Split(' ');
+                    string[] typeAndNumberOfColumns = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     int column = 0;
                     foreach (var typeAndNumberOfColumn in typeAndNumberOfColumns)
                     {
@@ -131,8 +131,19 @@ namespace ProjectZero.GameSystem
         }
         private Dictionary<string, Func<World, int, int, BaseEntity>> _factory = new Dictionary<string, Func<World, int, int, BaseEntity>>()
         {
+            // grass
             { "g", (world, x, y) => Create(new SpriteEntity("images/tiles/grass.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
-            { "rg", (world, x, y) => Create(new SpriteEntity("images/tiles/rock_in_grass.png", world, isAnimation: false, layer: Layer.Map) { Solid = true }, world, x, y, TileSize)}
+            { "rg", (world, x, y) => Create(new SpriteEntity("images/tiles/rock_in_grass.png", world, isAnimation: false, layer: Layer.Map) { Solid = true }, world, x, y, TileSize)},
+            // sand
+            { "s", (world, x, y) => Create(new SpriteEntity("images/tiles/sand.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgn", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gn.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgs", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gs.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgw", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gw.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sge", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_ge.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgnw", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gnw.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgne", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gne.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgsw", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gsw.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
+            { "sgse", (world, x, y) => Create(new SpriteEntity("images/tiles/sand_gse.png", world, isAnimation: false, layer: Layer.Map), world, x, y, TileSize)},
         };
 
         private static BaseEntity Create(BaseEntity e, World world, int x, int y, int tileSize)

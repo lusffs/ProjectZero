@@ -11,9 +11,13 @@ namespace ProjectZero.GameSystem.Entities
     public class Tower : SpriteEntity
     {
         private Vector2 _sizeOffset;
-        private const float Range = 3;
+        private const float Range = 3.0f;
         private bool _shouldDrawRange;
         private TextureHandle _rangeTexture;
+        private bool _isDefending;
+        private const float FireRateInMilliSeconds = 2000.0f;
+        private const int FireRateRandomMilliSeconds = 400;
+        private double _lastFireTime;
 
         public Tower(World world) : base("images/tower.png", world, isAnimation: false)
         {
@@ -41,16 +45,20 @@ namespace ProjectZero.GameSystem.Entities
                 _sizeOffset = _sizeOffset
             };
         }
+
+        private static Random _random = new Random();
         
-        public void StartDefending()
+        public void StartDefending(GameTime gameTime)
         {
-            
+            _isDefending = true;
+            _lastFireTime = gameTime.TotalGameTime.TotalMilliseconds + _random.Next(FireRateRandomMilliSeconds);
         }
 
         public override void Update(GameTime gameTime)
         {
             DrawRange();
-            
+            Defend(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -86,6 +94,26 @@ namespace ProjectZero.GameSystem.Entities
 
             _shouldDrawRange = false;
             return false;
+        }
+
+        private void Defend(GameTime gameTime)
+        {
+            if (!_isDefending)
+            {
+                return;
+            }
+
+            if (gameTime.TotalGameTime.TotalMilliseconds < _lastFireTime)
+            {
+                return;
+            }
+
+            _lastFireTime = gameTime.TotalGameTime.TotalMilliseconds + FireRateInMilliSeconds + _random.Next(FireRateRandomMilliSeconds);
+
+            if (World.Entities.OfType<Monster>().Any())
+            {
+                World.AddEntity(new Projectile(World, Position + _sizeOffset));
+            }
         }
     }
 }

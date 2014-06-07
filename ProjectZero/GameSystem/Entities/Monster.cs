@@ -94,6 +94,7 @@ namespace ProjectZero.GameSystem.Entities
 
             if (_currentPathIndex + 1 == _path.Count)
             {
+                // TODO:    remove this.
                 Animation.Stop();
                 Velocity = Vector2.Zero;
                 return false;

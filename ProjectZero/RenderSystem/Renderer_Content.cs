@@ -51,7 +51,7 @@ namespace ProjectZero.RenderSystem
                 return texture;
 
             }
-            texture = new Texture2DStream(path);
+            texture = new Texture2DStream(path, _whiteTexture);
             _contents.Add(texture);
             _texture2d.Add(path, texture);
 
@@ -119,10 +119,12 @@ namespace ProjectZero.RenderSystem
             private Texture2D _texture = null;
             private int _width;
             private int _height;
-             
-            public Texture2DStream(string fileName)
+            private readonly Texture2D _defaultTexture;
+
+            public Texture2DStream(string fileName, Texture2D defaultTexture)
             {
-                _fileName = fileName;                
+                _fileName = fileName;
+                _defaultTexture = defaultTexture;
             }
 
             public override Texture Texture
@@ -162,12 +164,19 @@ namespace ProjectZero.RenderSystem
                 }
                 catch (Exception)
                 {
-                    // TODO:    should use default texture here.
+                    _texture = _defaultTexture;
+                    _width = _defaultTexture.Width;
+                    _height = _defaultTexture.Height;
                 }
             }
 
             public override void Unload()
             {
+                if (_defaultTexture == _texture)
+                {
+                    return;
+                }
+
                 _texture.Dispose();
                 _texture = null;
             }

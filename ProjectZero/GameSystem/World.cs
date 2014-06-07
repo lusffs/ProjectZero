@@ -41,7 +41,12 @@ namespace ProjectZero.GameSystem
         private List<Point> _path = new List<Point>();
 
         private Tower _tower;
-        
+
+        private GameTime _lastGameTime;
+
+        private List<BaseEntity> _addedFrameEntites = new List<BaseEntity>();
+        private List<BaseEntity> _removedFrameEntities = new List<BaseEntity>();
+
         public void RegisterContent()
         {
             Map.RegisterContent();
@@ -64,6 +69,13 @@ namespace ProjectZero.GameSystem
 
         public void Update(GameTime gameTime)
         {
+            _lastGameTime = gameTime;
+
+            Entities.AddRange(_addedFrameEntites);
+            _addedFrameEntites.Clear();
+            Entities.RemoveAll(x => _removedFrameEntities.Contains(x));
+            _removedFrameEntities.Clear();
+
             Map.Update(gameTime);
 
             if (_mapHasNewBlockingEntity)
@@ -100,7 +112,7 @@ namespace ProjectZero.GameSystem
 
             foreach (var tower in Entities.OfType<Tower>())
             {
-                tower.StartDefending();
+                tower.StartDefending(_lastGameTime);
             }
         }
 
@@ -110,7 +122,23 @@ namespace ProjectZero.GameSystem
             defensePoint = new Point((int)(Map.DefensePoint.Position.X / Map.TileSize), (int)(Map.DefensePoint.Position.Y / Map.TileSize));
         }
 
-        private Random _random = new Random();
+        /// <summary>
+        /// Will add <paramref name="entity"/> next frame. If not also removed in same frame.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void AddEntity(BaseEntity entity)
+        {
+            _addedFrameEntites.Add(entity);
+        }
+
+        /// <summary>
+        /// Remove <paramref name="entity"/> next frame, even if added this frame.
+        /// </summary>
+        /// <param name="entity"></param>
+        public void RemoveEntity(BaseEntity entity)
+        {
+            _removedFrameEntities.Add(entity);
+        }
 
         public void AddTower(Point position)
         {

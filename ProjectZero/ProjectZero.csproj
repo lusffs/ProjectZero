@@ -54,6 +54,7 @@
     <Compile Include="GameSystem\Entities\Monster.cs" />
     <Compile Include="GameSystem\Entities\MonsterSpawn.cs" />
     <Compile Include="GameSystem\Entities\Movable.cs" />
+    <Compile Include="GameSystem\Entities\Projectile.cs" />
     <Compile Include="GameSystem\Entities\SpriteEntity.cs" />
     <Compile Include="GameSystem\Entities\StaticEntity.cs" />
     <Compile Include="GameSystem\Entities\Tower.cs" />

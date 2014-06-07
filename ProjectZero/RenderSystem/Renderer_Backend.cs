@@ -148,5 +148,35 @@ namespace ProjectZero.RenderSystem
                 SpriteBatch.DrawString(_font.Font, _text, _position, _color);
             }
         }
+
+        private class FillRectCommand : Command
+        {
+            private readonly Rectangle _rect;
+            private readonly Color _color;
+            private readonly Texture2D _whiteTexture;
+            private readonly int _addedIndex;
+
+            public FillRectCommand(Rectangle rect, Color color, SpriteBatch spriteBatch, Texture2D whiteTexture, Layer layer, int addedIndex) : base(spriteBatch, layer)
+            {
+                _rect = rect;
+                _color = color;
+                _whiteTexture = whiteTexture;
+                _addedIndex = addedIndex;
+            }
+
+            private float SortValue
+            {
+                get
+                {
+                    return (int)(_rect.X / Map.TileSize) + (int)(_rect.Y / Map.TileSize) * Map.Rows;
+                }
+            }
+
+            public override void Render(Renderer renderer, GameTime gameTime)
+            {
+                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
+                SpriteBatch.Draw(_whiteTexture, drawRectangle: _rect, color: _color, depth: depth);
+            }
+        }
     }
 }

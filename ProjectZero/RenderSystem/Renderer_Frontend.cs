@@ -46,5 +46,10 @@ namespace ProjectZero.RenderSystem
         {
             _commands.Add(new DrawStringCommand(font, position, color, text, _layers[(int)layer], layer));
         }
+
+        public void FillRect(Rectangle rect, Color color, Layer layer)
+        {
+            _commands.Add(new FillRectCommand(rect, color, _layers[(int)layer], _whiteTexture, layer, _commands.Count));
+        }
     }
 }

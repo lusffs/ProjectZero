@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,6 +16,11 @@ namespace ProjectZero.RenderSystem
         private List<RendererHandle> _contents = new List<RendererHandle>();
         private Dictionary<string, TextureHandle> _texture2d = new Dictionary<string, TextureHandle>(StringComparer.OrdinalIgnoreCase);
         private Dictionary<string, FontHandle> _fonts = new Dictionary<string, FontHandle>(StringComparer.OrdinalIgnoreCase);
+        
+        /// <summary>
+        /// 1x1 white pixel data.
+        /// </summary>
+        private Texture2D _whiteTexture;
 
         private void InitContent(GraphicsDevice graphicsDevice)
         {
@@ -32,8 +38,6 @@ namespace ProjectZero.RenderSystem
         {
             UnloadContent();
         }
-
-        // _test = Content.Load<Texture2D>("test");
 
         public TextureHandle RegisterTexture2D(string fileName)
         {
@@ -79,6 +83,9 @@ namespace ProjectZero.RenderSystem
                 _layers[i] = new SpriteBatch(GraphicsDevice);
             }
 
+            _whiteTexture = new Texture2D(graphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            _whiteTexture.SetData(new[] { Color.White });
+
             foreach (var t in _contents)
             {
                 t.Load(GraphicsDevice, ContentManager);
@@ -92,6 +99,10 @@ namespace ProjectZero.RenderSystem
                 _layers[i].Dispose();
                 _layers[i] = null;
             }
+
+
+            _whiteTexture.Dispose();
+            _whiteTexture = null;
 
             foreach (var t in _contents)
             {

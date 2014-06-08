@@ -49,6 +49,8 @@ namespace ProjectZero.GameSystem.Entities
             }
 
             // TODO:    play sound.
+            //          this will fail if path segment is not extending through axial direction.
+            //          ex. path segment (10, 5) -> (20, 5) and tower (5, 10), will pick (0, -1).
             Vector2 shootDirection = (new Vector2(nearestPath.X * Map.TileSize, nearestPath.Y * Map.TileSize) + new Vector2(Map.TileSize)) - Position;
             shootDirection.Normalize();
             // take closest axial direction.

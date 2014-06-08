@@ -122,17 +122,28 @@ namespace ProjectZero.GameSystem.Entities
             Position = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
         }
 
+        private bool BoxesIntersect(Vector2 min1, Vector2 max1, Vector2 min2, Vector2 max2)
+        {
+            if (max1.X < min2.X) return false; // a is left of b
+            if (min1.X > max2.X) return false; // a is right of b
+            if (max1.Y < min2.Y) return false; // a is above b
+            if (min1.Y > max2.Y) return false; // a is below b
+
+            return true; // boxes overlap
+        }
+
         private bool MonsterHit(GameTime gameTime)
         {
             Monster nearestMonsterHit = null;
             double nearestMonsterHitDistanceSquared = double.MaxValue;
-            var nextPosition = Position = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            foreach (var monster in World.Entities.OfType<Monster>().Where(x => x.IsVisible && x.Animation.IsPlaying))
+            var nextPosition = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // TODO:    uncomment where, only for testing impact point.
+            foreach (var monster in World.Entities.OfType<Monster>())//.Where(x => x.IsVisible && x.Animation.IsPlaying))
             {
-                var monsterOffset = new Vector2(Map.TileSize * (Map.TileSize / (float)monster.Animation.TileSize));
-                //return (abs(a.x - b.x) * 2 < (a.width + b.width)) && (abs(a.y - b.y) * 2 < (a.height + b.height));
-                if (Math.Abs(nextPosition.X - monster.Position.X + monsterOffset.X) * 2.0f <= (Size + monster.Animation.TileSize) &&
-                    Math.Abs(nextPosition.Y - monster.Position.Y + monsterOffset.Y) * 2.0f <= (Size + monster.Animation.TileSize))
+                var boundingBox = monster.Animation.BoundBox;
+                // TODO:    should size offset be included here?
+                if (BoxesIntersect(nextPosition, nextPosition + new Vector2(Size), monster.Position + new Vector2(boundingBox.X, boundingBox.Y), 
+                                   monster.Position + new Vector2(boundingBox.Width, boundingBox.Height)))
                 {
                     double distanceSquared = (monster.Position - nextPosition).LengthSquared();
 
@@ -150,12 +161,18 @@ namespace ProjectZero.GameSystem.Entities
             }
 
             nearestMonsterHit.Die();
-            // TODO:    should update player score here.
-            //          uncomment remove, only for testing impact point.
+            // TODO:    uncomment remove and remove fillrect, only for testing impact point.
             //World.RemoveEntity(this);
+            World.Renderer.FillRect(new Rectangle((int)nextPosition.X, (int)nextPosition.Y, (int)Size, (int)Size), Color.Black, RenderSystem.Layer.Last);
+            var bb = nearestMonsterHit.Animation.BoundBox;
+            World.Renderer.FillRect(new Rectangle((int)nearestMonsterHit.Position.X + bb.X, (int)nearestMonsterHit.Position.Y + bb.Y, 
+                (int)bb.Width - bb.X, (int)bb.Height - bb.Y), Color.Red, RenderSystem.Layer.Last);
             Velocity = Vector2.Zero;
+            World.PlayerScore += Score;
 
             return true;
         }
+
+        protected virtual int Score { get { return 10;  } }
     }
 }

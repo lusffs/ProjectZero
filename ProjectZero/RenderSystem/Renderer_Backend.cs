@@ -134,18 +134,20 @@ namespace ProjectZero.RenderSystem
             private readonly Vector2 _position;
             private readonly Color _color;
             private readonly string _text;
-            
-            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, Layer layer) : base(spriteBatch, layer)
+            private readonly float _scale;
+
+            public DrawStringCommand(FontHandle font, Vector2 position, Color color, string text, SpriteBatch spriteBatch, Layer layer, float scale) : base(spriteBatch, layer)
             {
                 _font = font;
                 _position = position;
                 _color = color;
                 _text = text;
+                _scale = scale;
             }
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                SpriteBatch.DrawString(_font.Font, _text, _position, _color);
+                SpriteBatch.DrawString(_font.Font, _text, _position, _color, rotation: 0, origin: Vector2.Zero, scale: _scale, effects: SpriteEffects.None, depth:  0);
             }
         }
 

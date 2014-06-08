@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProjectZero.SoundSystem;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ProjectZero.Framework
 {
@@ -46,8 +47,66 @@ namespace ProjectZero.Framework
         public void ContentLoaded()
         {
             _numberOfFramesInAnimation = _textureHandle.Width / _tileSize;
+            CaclulateBoundingBoxesForFrames();
         }
 
+        private readonly Rectangle[][] _boundingBoxes = new Rectangle[(int)AnimationDirection.Left + 1][];
+
+        private void CaclulateBoundingBoxesForFrames()
+        {
+            var data = new byte[_textureHandle.Width * _textureHandle.Height * 4];
+            ((Texture2D)_textureHandle.Texture).GetData(data);
+            for (int direction = (int)AnimationDirection.Up; direction <= (int)AnimationDirection.Left; direction++)
+            {
+                _boundingBoxes[direction] = new Rectangle[_numberOfFramesInAnimation];
+
+                for (int frame = 0; frame < _numberOfFramesInAnimation; frame++)
+                {
+                    int startX = frame * _tileSize;
+                    int startY = direction * _tileSize;
+                    int minx = int.MaxValue, maxx = int.MinValue;
+                    int miny = int.MaxValue, maxy = int.MinValue;
+
+                    for (int y = 0; y < _tileSize; y++)
+                    {
+                        for (int x = 0; x < _tileSize; x++)
+                        {
+                            int pixelOffset = ((x + startX + (y + startY) * _textureHandle.Width)) * 4;
+                            if (data[pixelOffset + 3] == 255)
+                            {
+                                if (x < minx)
+                                {
+                                    minx = x;
+                                }
+                                if (x > maxx)
+                                {
+                                    maxx = x;
+                                }
+
+                                if (y < miny)
+                                {
+                                    miny = y;
+                                }
+                                if (y > maxy)
+                                {
+                                    maxy = y;
+                                }
+                            }
+                        }
+                    }
+
+                    _boundingBoxes[direction][frame] = new Rectangle(minx, miny, maxx, maxy);
+                }
+            }
+        }
+
+        public Rectangle BoundBox
+        {
+            get
+            {
+                return _boundingBoxes[(int)_direction][_currentFrame];
+            }
+        }
 
         private int _currentFrame = 0;
 

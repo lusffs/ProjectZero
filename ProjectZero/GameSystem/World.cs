@@ -25,6 +25,8 @@ namespace ProjectZero.GameSystem
 
         public List<Point> Path { get { return _path; } }
 
+        public int PlayerScore { get; set; }
+
         public World(Renderer renderer, SoundRenderer soundRenderer)
         {
             Renderer = renderer;
@@ -49,6 +51,8 @@ namespace ProjectZero.GameSystem
         private List<BaseEntity> _addedFrameEntites = new List<BaseEntity>();
         private List<BaseEntity> _removedFrameEntities = new List<BaseEntity>();
 
+        private FontHandle _scoreFont;
+
         public void RegisterContent()
         {
             Map.RegisterContent();
@@ -60,6 +64,8 @@ namespace ProjectZero.GameSystem
 
             _tower = new Tower(this);
             _tower.RegisterContent();
+
+            _scoreFont = Renderer.RegisterFont("fonts/console");
         }
 
         public void ContentLoaded()
@@ -96,7 +102,12 @@ namespace ProjectZero.GameSystem
                 }                
             }
 
-            Entities.ForEach(x => x.Update(gameTime));             
+            Entities.ForEach(x => x.Update(gameTime));
+
+            string scoreString = string.Format("SCORE {0}", PlayerScore);
+            float scale = 2.0f;
+            var scoreSize = _scoreFont.Font.MeasureString(scoreString) * scale;
+            Renderer.DrawString(_scoreFont, scoreString, new Vector2(Renderer.GraphicsDevice.Viewport.Width, Renderer.GraphicsDevice.Viewport.Height - 16) - scoreSize, Color.WhiteSmoke, Layer.Last, scale);
         }
 
         public void AddMonster()

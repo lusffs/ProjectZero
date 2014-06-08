@@ -42,9 +42,9 @@ namespace ProjectZero.RenderSystem
             _commands.Add(new DrawImageCommand(texture, null, new Rectangle((int)position.X, (int)position.Y, width, height), sourceRect, _layers[(int)layer], layer, _commands.Count));
         }
 
-        public void DrawString(FontHandle font, string text, Vector2 position, Color color, Layer layer)
+        public void DrawString(FontHandle font, string text, Vector2 position, Color color, Layer layer, float scale = 1.0f)
         {
-            _commands.Add(new DrawStringCommand(font, position, color, text, _layers[(int)layer], layer));
+            _commands.Add(new DrawStringCommand(font, position, color, text, _layers[(int)layer], layer, scale));
         }
 
         public void FillRect(Rectangle rect, Color color, Layer layer)

@@ -9,14 +9,60 @@ namespace ProjectZero.GameSystem.Entities
 {
     public class Projectile : Movable
     {
-        private const float Speed = 160.0f;
+        private const float Speed = 120.0f;
         private const float Size = 4.0f;
         private const float PredictAheadSeconds = 0.5f;
 
         public Projectile(World world, Vector2 position) : base(null, world, isAnimation: false)
         {
             Position = position;
+            Position.X += Size / -2.0f + Map.TileSize / 2.0f;    // offset x to middle of tile. will shoot out from top middle.
+#if TRACK_MONSTER
             FindNearestMonsterAndSetVelocity();
+#else
+            FindNearestTrackAndSetVelocity();
+#endif
+        }
+
+        private void FindNearestTrackAndSetVelocity()
+        {
+            var path = World.Path;
+            if (path == null || path.Count < 1 || !World.Entities.OfType<Monster>().Any(x => x.IsVisible && x.Animation.IsPlaying))
+            {
+                // no active path or no active monster, so just die.
+                World.RemoveEntity(this);
+                Velocity = Vector2.Zero;
+                return;
+            }
+
+            Point nearestPath = default(Point);
+            double nearestPathDistanceSquared = double.MaxValue;
+            foreach (var point in path)
+            {
+                double distanceSquared = (new Vector2(point.X * Map.TileSize, point.Y * Map.TileSize) - Position).LengthSquared();
+
+                if (distanceSquared < nearestPathDistanceSquared)
+                {
+                    nearestPathDistanceSquared = distanceSquared;
+                    nearestPath = point;
+                }
+            }
+
+            // TODO:    play sound.
+            Vector2 shootDirection = (new Vector2(nearestPath.X * Map.TileSize, nearestPath.Y * Map.TileSize) + new Vector2(Map.TileSize)) - Position;
+            shootDirection.Normalize();
+            // take closest axial direction.
+            if (Math.Abs(shootDirection.X) > Math.Abs(shootDirection.Y))
+            {
+                shootDirection.Y = 0;
+                shootDirection.X = 1.0f * Math.Sign(shootDirection.X);
+            }
+            else
+            {
+                shootDirection.X = 0;
+                shootDirection.Y = 1.0f * Math.Sign(shootDirection.Y);
+            }
+            Velocity = shootDirection * Speed;
         }
 
         private void FindNearestMonsterAndSetVelocity()
@@ -64,11 +110,50 @@ namespace ProjectZero.GameSystem.Entities
 
         public override void Update(GameTime gameTime)
         {
-            // TODO:    should check for collision with monster here at Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds
-            //          if so. remove monster(death animation?), add score and remove this.
-            //          also. if out of map bounds, remove this.
+            // TODO:   if out of map bounds, remove this.
+
+            if (MonsterHit(gameTime))
+            {
+                return;
+            }
             World.Renderer.FillRect(new Rectangle((int)Position.X, (int)Position.Y, (int)Size, (int)Size), Color.Black, RenderSystem.Layer.Dynamic);
             Position = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        private bool MonsterHit(GameTime gameTime)
+        {
+            Monster nearestMonsterHit = null;
+            double nearestMonsterHitDistanceSquared = double.MaxValue;
+            var nextPosition = Position = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            foreach (var monster in World.Entities.OfType<Monster>().Where(x => x.IsVisible && x.Animation.IsPlaying))
+            {
+                var monsterOffset = new Vector2(Map.TileSize * (Map.TileSize / (float)monster.Animation.TileSize));
+                //return (abs(a.x - b.x) * 2 < (a.width + b.width)) && (abs(a.y - b.y) * 2 < (a.height + b.height));
+                if (Math.Abs(nextPosition.X - monster.Position.X + monsterOffset.X) * 2.0f <= (Size + monster.Animation.TileSize) &&
+                    Math.Abs(nextPosition.Y - monster.Position.Y + monsterOffset.Y) * 2.0f <= (Size + monster.Animation.TileSize))
+                {
+                    double distanceSquared = (monster.Position - nextPosition).LengthSquared();
+
+                    if (distanceSquared < nearestMonsterHitDistanceSquared)
+                    {
+                        nearestMonsterHitDistanceSquared = distanceSquared;
+                        nearestMonsterHit = monster;
+                    }
+                }                
+            }
+
+            if (nearestMonsterHit == null)
+            {
+                return false;
+            }
+
+            nearestMonsterHit.Die();
+            // TODO:    should update player score here.
+            //          uncomment remove, only for testing impact point.
+            //World.RemoveEntity(this);
+            Velocity = Vector2.Zero;
+
+            return true;
         }
     }
 }

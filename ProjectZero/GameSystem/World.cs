@@ -23,6 +23,8 @@ namespace ProjectZero.GameSystem
 
         public List<BaseEntity> Entities { get; private set; }
 
+        public List<Point> Path { get { return _path; } }
+
         public World(Renderer renderer, SoundRenderer soundRenderer)
         {
             Renderer = renderer;

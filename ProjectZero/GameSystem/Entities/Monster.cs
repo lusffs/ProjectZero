@@ -146,5 +146,14 @@ namespace ProjectZero.GameSystem.Entities
         }
 
         private int _currentPathIndex;
+
+        public void Die()
+        {
+            // TODO:    play sound. death animation, then remove?
+            //          uncomment remove and remove animation stop, only for testing impact point.
+            //World.RemoveEntity(this);
+            Animation.Stop();
+            Velocity = Vector2.Zero;
+        }
     }
 }

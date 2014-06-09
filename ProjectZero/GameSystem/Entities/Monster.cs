@@ -150,9 +150,7 @@ namespace ProjectZero.GameSystem.Entities
         public void Die()
         {
             // TODO:    play sound. death animation, then remove?
-            //          uncomment remove and remove animation stop, only for testing impact point.
-            //World.RemoveEntity(this);
-            Animation.Stop();
+            World.RemoveEntity(this);
             Velocity = Vector2.Zero;
         }
     }

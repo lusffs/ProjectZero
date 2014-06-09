@@ -112,7 +112,11 @@ namespace ProjectZero.GameSystem.Entities
 
         public override void Update(GameTime gameTime)
         {
-            // TODO:   if out of map bounds, remove this.
+            if (IsOutOfMapBounds())
+            {
+                World.RemoveEntity(this);
+                return;
+            }
 
             if (MonsterHit(gameTime))
             {
@@ -120,6 +124,17 @@ namespace ProjectZero.GameSystem.Entities
             }
             World.Renderer.FillRect(new Rectangle((int)Position.X, (int)Position.Y, (int)Size, (int)Size), Color.Black, RenderSystem.Layer.Dynamic);
             Position = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        }
+
+        private bool IsOutOfMapBounds()
+        {
+            if (Position.X + Size < 0 || Position.X > World.Renderer.GraphicsDevice.Viewport.Width ||
+                Position.Y + Size < 0 || Position.Y > World.Renderer.GraphicsDevice.Viewport.Height)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool BoxesIntersect(Vector2 min1, Vector2 max1, Vector2 min2, Vector2 max2)
@@ -137,8 +152,7 @@ namespace ProjectZero.GameSystem.Entities
             Monster nearestMonsterHit = null;
             double nearestMonsterHitDistanceSquared = double.MaxValue;
             var nextPosition = Position + Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            // TODO:    uncomment where, only for testing impact point.
-            foreach (var monster in World.Entities.OfType<Monster>())//.Where(x => x.IsVisible && x.Animation.IsPlaying))
+            foreach (var monster in World.Entities.OfType<Monster>().Where(x => x.IsVisible && x.Animation.IsPlaying))
             {
                 var boundingBox = monster.Animation.BoundBox;
                 // TODO:    should size offset be included here?
@@ -161,12 +175,7 @@ namespace ProjectZero.GameSystem.Entities
             }
 
             nearestMonsterHit.Die();
-            // TODO:    uncomment remove and remove fillrect, only for testing impact point.
-            //World.RemoveEntity(this);
-            World.Renderer.FillRect(new Rectangle((int)nextPosition.X, (int)nextPosition.Y, (int)Size, (int)Size), Color.Black, RenderSystem.Layer.Last);
-            var bb = nearestMonsterHit.Animation.BoundBox;
-            World.Renderer.FillRect(new Rectangle((int)nearestMonsterHit.Position.X + bb.X, (int)nearestMonsterHit.Position.Y + bb.Y, 
-                (int)bb.Width - bb.X, (int)bb.Height - bb.Y), Color.Red, RenderSystem.Layer.Last);
+            World.RemoveEntity(this);
             Velocity = Vector2.Zero;
             World.PlayerScore += Score;
 

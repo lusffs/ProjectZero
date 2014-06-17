@@ -47,7 +47,9 @@ namespace ProjectZero.GameSystem.Entities
         }
 
         private static Random _random = new Random();
-        
+
+        public bool IsDefending { get { return _isDefending; } }
+
         public void StartDefending(GameTime gameTime)
         {
             _isDefending = true;

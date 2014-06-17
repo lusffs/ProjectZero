@@ -53,14 +53,16 @@ namespace ProjectZero.GameSystem
 
         private FontHandle _scoreFont;
 
+        private Monster _slime;
+
         public void RegisterContent()
         {
             Map.RegisterContent();
 
             _segmentTexture = Renderer.RegisterTexture2D("images/path_marker1.png");
 
-            Entities.Add(new Monster("slime", this) { IsVisible = false });
-            Entities[0].RegisterContent();
+            _slime = new Monster("slime", this) { IsVisible = false };
+            _slime.RegisterContent();
 
             _tower = new Tower(this);
             _tower.RegisterContent();
@@ -72,17 +74,15 @@ namespace ProjectZero.GameSystem
         {
             Map.ContentLoaded();
             Entities.ForEach(x => x.ContentLoaded());
-            _tower.ContentLoaded();         
+            _tower.ContentLoaded();
+            _slime.ContentLoaded();
         }
 
         public void Update(GameTime gameTime)
         {
             _lastGameTime = gameTime;
 
-            Entities.AddRange(_addedFrameEntites);
-            _addedFrameEntites.Clear();
-            Entities.RemoveAll(x => _removedFrameEntities.Contains(x));
-            _removedFrameEntities.Clear();
+            AddAndRemoveFrameEntities();
 
             Map.Update(gameTime);
 
@@ -90,16 +90,16 @@ namespace ProjectZero.GameSystem
             {
                 Point start, end;
                 GetMonsterSpawnAndDefensePoints(out start, out end);
-                _path = PathFinder.GetPath(Map.Cells, start, end);                
+                _path = PathFinder.GetPath(Map.Cells, start, end);
                 _mapHasNewBlockingEntity = false;
             }
-            
+
             if (_path != null)
             {
                 foreach (var segment in _path)
                 {
                     Renderer.DrawImage(_segmentTexture, new Vector2(segment.X * Map.TileSize, segment.Y * Map.TileSize), Layer.Path);
-                }                
+                }
             }
 
             Entities.ForEach(x => x.Update(gameTime));
@@ -110,6 +110,14 @@ namespace ProjectZero.GameSystem
             Renderer.DrawString(_scoreFont, scoreString, new Vector2(Renderer.GraphicsDevice.Viewport.Width, Renderer.GraphicsDevice.Viewport.Height - 16) - scoreSize, Color.WhiteSmoke, Layer.Last, scale);
         }
 
+        private void AddAndRemoveFrameEntities()
+        {
+            Entities.AddRange(_addedFrameEntites);
+            _addedFrameEntites.Clear();
+            Entities.RemoveAll(x => _removedFrameEntities.Contains(x));
+            _removedFrameEntities.Clear();
+        }
+
         public void AddMonster()
         {
             if (_path == null)
@@ -117,16 +125,31 @@ namespace ProjectZero.GameSystem
                 return;
             }
 
+            AddSlime();
+
             foreach (var monster in Entities.OfType<Monster>())
             {
-                monster.IsVisible = true;
-                monster.WalkPath(_path, Map.MonsterSpawn.Position);
+                if (!monster.IsVisible)
+                {
+                    monster.IsVisible = true;
+                    monster.WalkPath(_path, Map.MonsterSpawn.Position);
+                }
             }
 
             foreach (var tower in Entities.OfType<Tower>())
             {
-                tower.StartDefending(_lastGameTime);
+                if (!tower.IsDefending)
+                {
+                    tower.StartDefending(_lastGameTime);
+                }
             }
+        }
+
+        private void AddSlime()
+        {
+            // TODO:    make a class out for slime?
+            var monsterToAdd = _slime.Clone(Vector2.Zero);
+            Entities.Add(monsterToAdd);            
         }
 
         private void GetMonsterSpawnAndDefensePoints(out Point monsterSpawn, out Point defensePoint)

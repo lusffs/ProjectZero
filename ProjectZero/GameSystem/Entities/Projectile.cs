@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define TRACK_MONSTER
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -91,8 +92,7 @@ namespace ProjectZero.GameSystem.Entities
                 return;
             }
 
-            // TODO:    should we always shoot in vert/horz straight lines? if so, then this need to change.
-            //          play sound.
+            // TODO:    play sound.
             float sizeFactor = (Map.TileSize * (Map.TileSize / (float)nearestMonster.Animation.TileSize));
             // sizeFactor + TileSize = center of image = tile center. also predict ahead for monster position and use that as target.
             Vector2 shootDirection = (nearestMonster.Position + new Vector2(sizeFactor + Map.TileSize) + nearestMonster.Velocity * PredictAheadSeconds) - Position;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using ProjectZero.Framework;
 
 namespace ProjectZero.GameSystem.Entities
 {
@@ -14,6 +15,7 @@ namespace ProjectZero.GameSystem.Entities
 
         }
 
+        
         public override void ContentLoaded()
         {
             base.ContentLoaded();
@@ -94,7 +96,7 @@ namespace ProjectZero.GameSystem.Entities
 
             if (_currentPathIndex + 1 == _path.Count)
             {
-                // TODO:    remove this.
+                // TODO:    remove this. should remove this and update score.
                 Animation.Stop();
                 Velocity = Vector2.Zero;
                 return false;
@@ -117,8 +119,8 @@ namespace ProjectZero.GameSystem.Entities
             Position.X = startPosition.X - sizeFactor;
             Position.Y = startPosition.Y - sizeFactor;
             var direction = new Vector2();
-            direction.X = (path[0].X * Map.TileSize) - startPosition.X;// - (Map.TileSize * (Map.TileSize / (float)Animation.TileSize));
-            direction.Y = (path[0].Y * Map.TileSize) - startPosition.Y;// - (Map.TileSize * (Map.TileSize / (float)Animation.TileSize));
+            direction.X = (path[0].X * Map.TileSize) - startPosition.X;
+            direction.Y = (path[0].Y * Map.TileSize) - startPosition.Y;
             direction.Normalize();
             Velocity.X = direction.X * Speed;
             Velocity.Y = direction.Y * Speed;
@@ -152,6 +154,16 @@ namespace ProjectZero.GameSystem.Entities
             // TODO:    play sound. death animation, then remove?
             World.RemoveEntity(this);
             Velocity = Vector2.Zero;
+        }
+
+        public override BaseEntity Clone(Vector2 position)
+        {
+            return new Monster(AssetFileName, World, false)
+            {
+                Animation = Animation.Clone(),
+                AssetFileName = AssetFileName,
+                IsVisible = false
+            };
         }
     }
 }

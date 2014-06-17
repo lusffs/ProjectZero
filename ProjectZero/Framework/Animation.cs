@@ -39,6 +39,33 @@ namespace ProjectZero.Framework
             _soundRenderer = soundRenderer;
         }
 
+        public Animation Clone()
+        {
+            var animation = new Animation(_renderer, _soundRenderer, Path.GetFileNameWithoutExtension(_fileName))
+            {
+                _textureHandle = _textureHandle,
+                _tileSize = _tileSize,
+                _numberOfFramesInAnimation = _numberOfFramesInAnimation,
+                _playing = false,
+                _direction = AnimationDirection.Up,
+                _sounds = new Dictionary<int, SoundHandle>(_sounds)
+
+            };
+
+            for (int direction = (int)AnimationDirection.Up; direction <= (int)AnimationDirection.Left; direction++)
+            {
+                animation._boundingBoxes[direction] = new Rectangle[_numberOfFramesInAnimation];
+
+                for (int frame = 0; frame < _numberOfFramesInAnimation; frame++)
+                {
+                    var sourceRect = _boundingBoxes[direction][frame];
+                    animation._boundingBoxes[direction][frame] = new Rectangle(sourceRect.X, sourceRect.Y, sourceRect.Width, sourceRect.Height);
+                }
+            }
+
+            return animation;
+        }
+
         public void RegisterContent()
         {
             Load();

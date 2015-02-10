@@ -10,6 +10,7 @@ using ProjectZero.RenderSystem;
 using ProjectZero.SoundSystem;
 using ProjectZero.Framework;
 using ProjectZero.GameSystem.Entities;
+using ProjectZero.GameSystem.Economy;
 
 namespace ProjectZero.GameSystem
 {
@@ -19,6 +20,7 @@ namespace ProjectZero.GameSystem
         private readonly SoundRenderer _soundRenderer;
         private readonly Input _input;
         private readonly World _world;
+        private readonly ProductList _productList;
 
         public Game(Renderer renderer, SoundRenderer soundRenderer, Input input)
         {
@@ -26,6 +28,7 @@ namespace ProjectZero.GameSystem
             _soundRenderer = soundRenderer;
             _input = input;
             _world = new World(_renderer, _soundRenderer);
+            _productList = new ProductList(_renderer);
 
             _input.KeyEventHandler += KeyHandle;
             _input.MouseEventHandler += MouseHandle;
@@ -34,24 +37,28 @@ namespace ProjectZero.GameSystem
         public void Initialize()
         {
             // initialize any game state here.
-            _world.Initialize();            
+            _world.Initialize();
+            _productList.Init(_world);
         }
 
         TextureHandle _mousePointer;
         Point _mousePosition;
-        TextureHandle _mouseTower;
+        
 
         public void RegisterContent()
         {
             // register any content here through sub system 
-            _world.RegisterContent();            
-            _mousePointer = _renderer.RegisterTexture2D("images/ui/cursor.png");
-            _mouseTower = _renderer.RegisterTexture2D("images/ui/tower_marker.png");
+            _world.RegisterContent();
+
+            _productList.RegisterContent();
+
+            _mousePointer = _renderer.RegisterTexture2D("images/ui/cursor.png");            
         }
 
         public void ContentLoaded()
         {
-            _world.ContentLoaded();            
+            _world.ContentLoaded();
+            _productList.ContentLoaded();
         }
 
         public void Frame(GameTime gameTime)
@@ -63,31 +70,9 @@ namespace ProjectZero.GameSystem
             
             _world.Update(gameTime);
             DrawMouse();
-            DrawTowerMarkerOrTowerRadius();
-        }
-
-        private void DrawTowerMarkerOrTowerRadius()
-        {
-            // only draw if we are not touching the left/up border of the window.
-            // window managment will start drawing regular cursor at that point resulting
-            // in double pointer.
-            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
-            {
-                foreach (var tower in _world.Entities.OfType<Tower>())
-                {
-                    if (tower.ShouldDrawRange(_mousePosition))
-                    {
-                        return;
-                    }
-                }
-
-                float sizeFactor = (Map.TileSize * (Map.TileSize / (float)_mouseTower.Width));
-                _renderer.DrawImage(_mouseTower,
-                    new Vector2(_mousePosition.X / Map.TileSize * Map.TileSize - sizeFactor,
-                                _mousePosition.Y / Map.TileSize * Map.TileSize - sizeFactor),
-                    Layer.Last);
-            }
-        }
+         
+            _productList.Draw(gameTime, _mousePosition);
+        }        
 
         private void DrawMouse()
         {

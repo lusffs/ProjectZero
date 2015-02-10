@@ -8,9 +8,8 @@ using ProjectZero.RenderSystem;
 
 namespace ProjectZero.GameSystem.Entities
 {
-    public class Tower : SpriteEntity
+    public class Tower : BaseTower
     {
-        private Vector2 _sizeOffset;
         private const float Range = 3.0f;
         private bool _shouldDrawRange;
         private TextureHandle _rangeTexture;
@@ -19,18 +18,11 @@ namespace ProjectZero.GameSystem.Entities
         private const int FireRateRandomMilliSeconds = 400;
         private double _lastFireTime;
 
-        public Tower(World world) : base("images/tower.png", world, isAnimation: false)
+        public Tower(World world) : base(world)
         {
-            Solid = true;
             _rangeTexture = World.Renderer.RegisterTexture2D("images/ui/radius.png");
         }
-
-        public override void ContentLoaded()
-        {
-            base.ContentLoaded();
-            _sizeOffset = new Vector2(Map.TileSize * (Map.TileSize / (float)Image.Width), Map.TileSize * (Map.TileSize / (float)Image.Height));
-        }
-
+        
         public override BaseEntity Clone(Vector2 position)
         {
             return new Tower(World)

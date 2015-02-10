@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZero.GameSystem;
 
 namespace ProjectZero.RenderSystem
 {
@@ -22,7 +23,9 @@ namespace ProjectZero.RenderSystem
         public Renderer(GraphicsDeviceManager graphicsDeviceManager, ContentManager contentManager)
         {
             GraphicsDeviceManager = graphicsDeviceManager;
-            ContentManager = contentManager;            
+            ContentManager = contentManager;
+
+            GraphicsDeviceManager.PreferredBackBufferHeight = 480 + Map.TileSize * 2;
         }        
     }
 }

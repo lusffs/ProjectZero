@@ -49,7 +49,10 @@
     <Compile Include="Framework\FpsMeter.cs" />
     <Compile Include="Framework\PathFinding\Cell.cs" />
     <Compile Include="Framework\PathFinding\PathFinder.cs" />
+    <Compile Include="GameSystem\Economy\ProductList.cs" />
+    <Compile Include="GameSystem\Economy\Wallet.cs" />
     <Compile Include="GameSystem\Entities\BaseEntity.cs" />
+    <Compile Include="GameSystem\Entities\BaseTower.cs" />
     <Compile Include="GameSystem\Entities\DefensePoint.cs" />
     <Compile Include="GameSystem\Entities\Monster.cs" />
     <Compile Include="GameSystem\Entities\MonsterSpawn.cs" />

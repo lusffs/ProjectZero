@@ -176,14 +176,14 @@ namespace ProjectZero.GameSystem
             _removedFrameEntities.Add(entity);
         }
 
-        public void AddTower(Point position)
+        public bool AddTower(Point position)
         {
             _mapHasNewBlockingEntity = true;
             var cell = Map.Cells[position.Y, position.X];
             var gridCell = Map.Grid[position.Y][position.X];
             if (cell.IsStart || cell.IsTarget || gridCell.Solid)
             {
-                return;
+                return false;
             }
 
             gridCell.Solid = true;
@@ -195,10 +195,12 @@ namespace ProjectZero.GameSystem
             {
                 gridCell.Solid = false;
                 cell.IsBlocked = false;
-                return;
+                return false;
             }
 
             Entities.Add(_tower.Clone(new Vector2(position.X, position.Y)));
+
+            return true;
         }
     }
 }

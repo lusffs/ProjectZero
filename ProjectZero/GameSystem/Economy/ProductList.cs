@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using ProjectZero.GameSystem.Entities;
+using ProjectZero.InputSystem;
 using ProjectZero.RenderSystem;
 
 namespace ProjectZero.GameSystem.Economy
@@ -25,6 +26,8 @@ namespace ProjectZero.GameSystem.Economy
         private TextureHandle _mouseTower;
 
         private World _world;
+
+        private Point _mousePosition;
 
         public ProductList(Renderer renderer)
         {
@@ -64,7 +67,7 @@ namespace ProjectZero.GameSystem.Economy
             _mouseTower = _renderer.RegisterTexture2D("images/ui/tower_marker.png");
         }
 
-        public void Draw(GameTime gameTime, Point mousePosition)
+        public void Draw(GameTime gameTime)
         {
             for (int i = 0; i < Map.Columns; i++)
             {
@@ -78,30 +81,57 @@ namespace ProjectZero.GameSystem.Economy
                 _towers[i].Update(gameTime);
             }
 
-            DrawTowerMarkerOrTowerRadius(mousePosition);
+            DrawTowerMarkerOrTowerRadius();
         }
 
-        private void DrawTowerMarkerOrTowerRadius(Point mousePosition)
+        private void DrawTowerMarkerOrTowerRadius()
         {
             // only draw if we are not touching the left/up border of the window.
             // window managment will start drawing regular cursor at that point resulting
             // in double pointer.
-            if (mousePosition.X >= 0 && mousePosition.Y >= 0)
+            if (_mousePosition.X >= 0 && _mousePosition.Y >= 0)
             {
                 foreach (var tower in _world.Entities.OfType<Tower>())
                 {
-                    if (tower.ShouldDrawRange(mousePosition))
+                    if (tower.ShouldDrawRange(_mousePosition))
                     {
                         return;
                     }
                 }
 
-                float sizeFactor = (Map.TileSize * (Map.TileSize / (float)_mouseTower.Width));
-                _renderer.DrawImage(_mouseTower,
-                    new Vector2(mousePosition.X / Map.TileSize * Map.TileSize - sizeFactor,
-                                mousePosition.Y / Map.TileSize * Map.TileSize - sizeFactor),
-                    Layer.Last);
+                if (InBuyMode)
+                {
+                    float sizeFactor = (Map.TileSize * (Map.TileSize / (float)_mouseTower.Width));
+                    _renderer.DrawImage(_mouseTower,
+                        new Vector2(_mousePosition.X / Map.TileSize * Map.TileSize - sizeFactor,
+                                    _mousePosition.Y / Map.TileSize * Map.TileSize - sizeFactor),
+                        Layer.Last);
+                }
             }
         }
+
+        public void MouseHandle(object sender, MouseEventArgs e)
+        {
+            _mousePosition.X = e.X;
+            _mousePosition.Y = e.Y;
+
+            if (e.State == KeyState.Down)
+            {
+                if (e.X > 0 && e.X < Map.Columns * Map.TileSize && e.Y > Map.Rows * Map.TileSize && e.Y < (Map.Rows + 2) * Map.TileSize)
+                {
+                    InBuyMode = true;
+                    BuyTower = _towers[0];
+                }
+                else
+                {
+                    InBuyMode = false;
+                    BuyTower = null;
+                }
+            }
+        }
+
+        public bool InBuyMode { get; private set; }
+
+        public BaseTower BuyTower { get; private set; }
     }
 }

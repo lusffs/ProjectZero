@@ -92,6 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Content\animations\magictower.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Content\animations\slime.cfg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -156,7 +159,9 @@
     <Content Include="Content\images\ui\tower_marker.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\images\tower_magic_overlay.png" />
+    <Content Include="Content\images\tower_magic_overlay.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\sounds\slime\slime_2.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

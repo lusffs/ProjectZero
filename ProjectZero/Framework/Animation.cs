@@ -30,10 +30,12 @@ namespace ProjectZero.Framework
         private bool _playing;
         private AnimationDirection _direction;
         private Dictionary<int, SoundHandle> _sounds = new Dictionary<int, SoundHandle>();
+        private readonly bool _singleDirection;
 
         // 
-        public Animation(Renderer renderer, SoundRenderer soundRenderer, string fileName)
+        public Animation(Renderer renderer, SoundRenderer soundRenderer, string fileName, bool singleDirection = false)
         {
+            _singleDirection = singleDirection;
             _renderer = renderer;
             _fileName = fileName + ".cfg";
             _soundRenderer = soundRenderer;
@@ -83,14 +85,14 @@ namespace ProjectZero.Framework
         {
             var data = new byte[_textureHandle.Width * _textureHandle.Height * 4];
             ((Texture2D)_textureHandle.Texture).GetData(data);
-            for (int direction = (int)AnimationDirection.Up; direction <= (int)AnimationDirection.Left; direction++)
+            for (int direction = (int)(_singleDirection ? AnimationDirection.Left : AnimationDirection.Up); direction <= (int)AnimationDirection.Left; direction++)
             {
                 _boundingBoxes[direction] = new Rectangle[_numberOfFramesInAnimation];
 
                 for (int frame = 0; frame < _numberOfFramesInAnimation; frame++)
                 {
                     int startX = frame * _tileSize;
-                    int startY = direction * _tileSize;
+                    int startY = (_singleDirection ? 0 :  direction) * _tileSize;
                     int minx = int.MaxValue, maxx = int.MinValue;
                     int miny = int.MaxValue, maxy = int.MinValue;
 

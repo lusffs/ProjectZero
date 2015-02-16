@@ -44,8 +44,6 @@ namespace ProjectZero.GameSystem
         private bool _mapHasNewBlockingEntity = true;
         private List<Point> _path = new List<Point>();
 
-        private Tower _tower;
-
         private GameTime _lastGameTime;
 
         private List<BaseEntity> _addedFrameEntites = new List<BaseEntity>();
@@ -64,9 +62,6 @@ namespace ProjectZero.GameSystem
             _slime = new Monster("slime", this) { IsVisible = false };
             _slime.RegisterContent();
 
-            _tower = new Tower(this);
-            _tower.RegisterContent();
-
             _scoreFont = Renderer.RegisterFont("fonts/console");
         }
 
@@ -74,7 +69,6 @@ namespace ProjectZero.GameSystem
         {
             Map.ContentLoaded();
             Entities.ForEach(x => x.ContentLoaded());
-            _tower.ContentLoaded();
             _slime.ContentLoaded();
         }
 
@@ -176,7 +170,7 @@ namespace ProjectZero.GameSystem
             _removedFrameEntities.Add(entity);
         }
 
-        public bool AddTower(Point position)
+        public bool AddTower(Point position, BaseTower tower)
         {
             _mapHasNewBlockingEntity = true;
             var cell = Map.Cells[position.Y, position.X];
@@ -198,7 +192,7 @@ namespace ProjectZero.GameSystem
                 return false;
             }
 
-            Entities.Add(_tower.Clone(new Vector2(position.X, position.Y)));
+            Entities.Add(tower.Clone(new Vector2(position.X, position.Y)));
 
             return true;
         }

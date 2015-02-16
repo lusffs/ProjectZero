@@ -10,12 +10,14 @@ namespace ProjectZero.GameSystem.Entities
 {
     public class Projectile : Movable
     {
-        private const float Speed = 120.0f;
         private const float Size = 4.0f;
         private const float PredictAheadSeconds = 0.5f;
+        private const int Damage = 60;
+        private float _speed;
 
-        public Projectile(World world, Vector2 position) : base(null, world, isAnimation: false)
+        public Projectile(World world, Vector2 position, float speed) : base(null, world, isAnimation: false)
         {
+            _speed = speed;
             Position = position;
             Position.X += Size / -2.0f + Map.TileSize / 2.0f;    // offset x to middle of tile. will shoot out from top middle.
 #if TRACK_MONSTER
@@ -65,7 +67,7 @@ namespace ProjectZero.GameSystem.Entities
                 shootDirection.X = 0;
                 shootDirection.Y = 1.0f * Math.Sign(shootDirection.Y);
             }
-            Velocity = shootDirection * Speed;
+            Velocity = shootDirection * _speed;
         }
 
         private void FindNearestMonsterAndSetVelocity()
@@ -97,7 +99,7 @@ namespace ProjectZero.GameSystem.Entities
             // sizeFactor + TileSize = center of image = tile center. also predict ahead for monster position and use that as target.
             Vector2 shootDirection = (nearestMonster.Position + new Vector2(sizeFactor + Map.TileSize) + nearestMonster.Velocity * PredictAheadSeconds) - Position;
             shootDirection.Normalize();
-            Velocity = shootDirection * Speed;
+            Velocity = shootDirection * _speed;
         }
 
         public override void RegisterContent()
@@ -174,7 +176,7 @@ namespace ProjectZero.GameSystem.Entities
                 return false;
             }
 
-            nearestMonsterHit.Die();
+            nearestMonsterHit.Damage(Damage);
             World.RemoveEntity(this);
             Velocity = Vector2.Zero;
             World.PlayerScore += Score;

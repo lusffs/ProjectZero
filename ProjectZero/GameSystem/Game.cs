@@ -100,7 +100,7 @@ namespace ProjectZero.GameSystem
             Wallet.Transaction transaction;
             if (_productList.InBuyMode && e.Button == MouseButton.Left && e.State == KeyState.Down && (transaction = _wallet.Reservation(_productList.BuyTower)) != null)
             {
-                if (_world.AddTower(new Point((int)(_mousePosition.X / Map.TileSize), (int)(_mousePosition.Y / Map.TileSize))))
+                if (_world.AddTower(new Point((int)(_mousePosition.X / Map.TileSize), (int)(_mousePosition.Y / Map.TileSize)), _productList.BuyTower))
                 {
                     _wallet.Purchase(transaction);
                 }

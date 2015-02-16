@@ -11,21 +11,29 @@ namespace ProjectZero.GameSystem.Entities
     public class Tower : BaseTower
     {
         private const float Range = 3.0f;
-        private bool _shouldDrawRange;
-        private TextureHandle _rangeTexture;
+        protected bool _shouldDrawRange;
+        protected TextureHandle _rangeTexture;
         private bool _isDefending;
-        private const float FireRateInMilliSeconds = 2000.0f;
         private const int FireRateRandomMilliSeconds = 400;
         private double _lastFireTime;
 
-        public Tower(World world) : base(world)
+        public Tower(World world, int price)
+            : base(world, price, "images/tower.png")
         {
             _rangeTexture = World.Renderer.RegisterTexture2D("images/ui/radius.png");
         }
         
+        protected virtual float FireRateInMilliSeconds
+        {
+            get
+            {
+                return 2000.0f;                     
+            }
+        }
+
         public override BaseEntity Clone(Vector2 position)
         {
-            return new Tower(World)
+            return new Tower(World, Price)
             {
                 Animation = Animation,
                 AssetFileName = AssetFileName,
@@ -106,7 +114,15 @@ namespace ProjectZero.GameSystem.Entities
 
             if (World.Entities.OfType<Monster>().Any())
             {
-                World.AddEntity(new Projectile(World, Position + _sizeOffset));
+                World.AddEntity(new Projectile(World, Position + _sizeOffset, ProjectileSpeed));
+            }
+        }
+
+        protected virtual float ProjectileSpeed
+        {
+            get
+            {
+                return 120f;
             }
         }
     }

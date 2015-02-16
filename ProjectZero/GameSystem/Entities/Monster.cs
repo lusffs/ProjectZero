@@ -10,12 +10,17 @@ namespace ProjectZero.GameSystem.Entities
 {
     public class Monster : Movable
     {
+        private int _health = MaxHealth;
+        private int _currentPathIndex;
+        private List<Point> _path = null;
+        private const float Speed = 800f / 12f;
+        private const int MaxHealth = 100;
+
         public Monster(string assetFileName, World world, bool isAnimation = true) : base(assetFileName, world, isAnimation)
         {
 
         }
 
-        
         public override void ContentLoaded()
         {
             base.ContentLoaded();
@@ -39,6 +44,34 @@ namespace ProjectZero.GameSystem.Entities
             {
                 MoveTowardsNextTarget();
             }
+
+            DrawHealth();
+        }
+
+        private void DrawHealth()
+        {
+            int offsetY;
+            
+            if (Animation.TileSize > Map.TileSize)
+            {
+                offsetY = Map.TileSize * (int)(Map.TileSize / (float)Animation.TileSize) + Map.TileSize / 2;
+            }
+            else
+            {
+                offsetY = Map.TileSize / 2;
+            }
+
+            float healthFactor = (_health / (float)MaxHealth);
+            if (healthFactor < 0)
+            {
+                healthFactor = 0;
+            }
+            if (healthFactor > 1)
+            {
+                healthFactor = 1;
+            }
+
+            World.Renderer.FillRect(new Rectangle((int)Position.X + Map.TileSize / 2, (int)Position.Y + offsetY, (int)(healthFactor * Map.TileSize), 4), Color.Red, RenderSystem.Layer.Dynamic);
         }
 
         private void MoveTowardsNextTarget()
@@ -105,10 +138,6 @@ namespace ProjectZero.GameSystem.Entities
             return true;            
         }
 
-        private List<Point> _path = null;
-
-        private const float Speed = 800f / 12f;
-        
         public void WalkPath(List<Point> path, Vector2 startPosition)
         {
             _path = path;
@@ -147,15 +176,6 @@ namespace ProjectZero.GameSystem.Entities
             
         }
 
-        private int _currentPathIndex;
-
-        public void Die()
-        {
-            // TODO:    play sound. death animation, then remove?
-            World.RemoveEntity(this);
-            Velocity = Vector2.Zero;
-        }
-
         public override BaseEntity Clone(Vector2 position)
         {
             return new Monster(AssetFileName, World, false)
@@ -165,5 +185,22 @@ namespace ProjectZero.GameSystem.Entities
                 IsVisible = false
             };
         }
+
+        public void Damage(int damage)
+        {
+            _health -= damage;
+            if (_health <= 0)
+            {
+                _health = 0;
+                Die();
+            }
+        }
+
+        private void Die()
+        {
+            // TODO:    play sound. death animation, then remove?
+            World.RemoveEntity(this);
+            Velocity = Vector2.Zero;
+        }        
     }
 }

@@ -14,7 +14,8 @@ namespace ProjectZero.GameSystem.Economy
     {
         private Func<World, BaseTower>[] _towerFactory = new Func<World, BaseTower>[]
         {
-            world => new BaseTower(world)
+            world => new Tower(world, 13),
+            world => new MagicTower(world, 19)
         };
 
         private BaseTower[] _towers;
@@ -120,7 +121,13 @@ namespace ProjectZero.GameSystem.Economy
                 if (e.X > 0 && e.X < Map.Columns * Map.TileSize && e.Y > Map.Rows * Map.TileSize && e.Y < (Map.Rows + 2) * Map.TileSize)
                 {
                     InBuyMode = true;
-                    BuyTower = _towers[0];
+                    // TODO:    handle diffrent tower sizes and snap.
+                    int index = (int)(e.X / (Map.TileSize));
+                    if (index >= _towers.Length)
+                    {
+                        index = _towers.Length - 1; 
+                    }
+                    BuyTower = _towers[index];
                 }
                 else
                 {

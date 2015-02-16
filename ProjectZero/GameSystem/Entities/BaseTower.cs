@@ -11,9 +11,22 @@ namespace ProjectZero.GameSystem.Entities
     {
         protected Vector2 _sizeOffset;
 
-        public BaseTower(World world) : base("images/tower.png", world, isAnimation: false)
+        private readonly int _price;
+        
+        public BaseTower(World world, int price, string assetFileName)
+            : base(assetFileName, world, isAnimation: false)
         {
             Solid = true;
+            _price = price;
+        }
+
+        // TODO:_   move to sprite.
+        public Vector2 SizeOffset
+        {
+            get
+            {
+                return _sizeOffset;
+            }
         }
 
         public override void ContentLoaded()
@@ -24,7 +37,7 @@ namespace ProjectZero.GameSystem.Entities
 
         public override BaseEntity Clone(Vector2 position)
         {
-            return new BaseTower(World)
+            return new BaseTower(World, _price, AssetFileName)
             {
                 Animation = Animation,
                 AssetFileName = AssetFileName,
@@ -35,11 +48,11 @@ namespace ProjectZero.GameSystem.Entities
             };
         }
 
-        public virtual int Price
+        public int Price
         {
             get
             {
-                return 13;
+                return _price;
             } 
         }
              

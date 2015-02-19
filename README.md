@@ -1,3 +1,3 @@
 ProjectZero
 ===========
-Amazing new game by Loud Fall Studios
+Amazing new game by Loud Fall Studios!

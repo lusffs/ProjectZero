@@ -54,7 +54,8 @@ namespace ProjectZero.GameSystem.Economy
             string balanceString = string.Format("BALANCE {0}", Balance);
             float scale = 2.0f;
             var balanceSize = _font.Font.MeasureString(balanceString) * scale;
-            _renderer.DrawString(_font, balanceString, new Vector2(_renderer.GraphicsDevice.Viewport.Width, _renderer.GraphicsDevice.Viewport.Height) - balanceSize, Color.WhiteSmoke, Layer.Last, scale);
+            balanceSize = _renderer.AdjustToVirtual(balanceSize);
+            _renderer.DrawString(_font, balanceString, new Vector2(Renderer.ScreenWidth, Renderer.ScreenHeight) - balanceSize, Color.WhiteSmoke, Layer.Last, scale);
         }
 
         public void ConentLoaded()

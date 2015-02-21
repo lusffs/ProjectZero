@@ -101,7 +101,8 @@ namespace ProjectZero.GameSystem
             string scoreString = string.Format("SCORE {0}", PlayerScore);
             float scale = 2.0f;
             var scoreSize = _scoreFont.Font.MeasureString(scoreString) * scale;
-            Renderer.DrawString(_scoreFont, scoreString, new Vector2(Renderer.GraphicsDevice.Viewport.Width, Renderer.GraphicsDevice.Viewport.Height - 16) - scoreSize, Color.WhiteSmoke, Layer.Last, scale);
+            scoreSize = Renderer.AdjustToVirtual(scoreSize);
+            Renderer.DrawString(_scoreFont, scoreString, new Vector2(Renderer.ScreenWidth, Renderer.ScreenHeight - 16) - scoreSize, Color.WhiteSmoke, Layer.Last, scale);
         }
 
         private void AddAndRemoveFrameEntities()

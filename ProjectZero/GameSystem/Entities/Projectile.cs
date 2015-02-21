@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using ProjectZero.RenderSystem;
 
 namespace ProjectZero.GameSystem.Entities
 {
@@ -130,8 +131,8 @@ namespace ProjectZero.GameSystem.Entities
 
         private bool IsOutOfMapBounds()
         {
-            if (Position.X + Size < 0 || Position.X > World.Renderer.GraphicsDevice.Viewport.Width ||
-                Position.Y + Size < 0 || Position.Y > World.Renderer.GraphicsDevice.Viewport.Height)
+            if (Position.X + Size < 0 || Position.X > Renderer.ScreenWidth ||
+                Position.Y + Size < 0 || Position.Y > Renderer.ScreenHeight)
             {
                 return true;
             }

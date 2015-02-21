@@ -71,7 +71,7 @@ namespace ProjectZero.RenderSystem
 
             public SpriteBatch SpriteBatch { get; private set; }
 
-            public Layer Layer { get; private set; }            
+            public Layer Layer { get; private set; }           
         }
 
         private class ClearColorCommand : Command
@@ -123,8 +123,15 @@ namespace ProjectZero.RenderSystem
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;                
-                SpriteBatch.Draw((Texture2D)_texture.Texture, position: _position, drawRectangle: _drawRect, sourceRectangle: _sourceRect, depth: depth);                
+                float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
+                
+                SpriteBatch.Draw(
+                    (Texture2D)_texture.Texture, 
+                    position: renderer.AdjustFromVirtual(_position), 
+                    drawRectangle: renderer.AdjustFromVirtual(_drawRect), 
+                    sourceRectangle: _sourceRect, 
+                    depth: depth,
+                    scale: renderer.AdjustFromVirtual(Vector2.One));
             }
         }
 
@@ -147,7 +154,16 @@ namespace ProjectZero.RenderSystem
 
             public override void Render(Renderer renderer, GameTime gameTime)
             {
-                SpriteBatch.DrawString(_font.Font, _text, _position, _color, rotation: 0, origin: Vector2.Zero, scale: _scale, effects: SpriteEffects.None, depth:  0);
+                SpriteBatch.DrawString(
+                    _font.Font, 
+                    _text,
+                    renderer.AdjustFromVirtual(_position), 
+                    _color, 
+                    rotation: 0, 
+                    origin: Vector2.Zero, 
+                    scale: _scale, 
+                    effects: SpriteEffects.None, 
+                    depth:  0);
             }
         }
 
@@ -177,7 +193,11 @@ namespace ProjectZero.RenderSystem
             public override void Render(Renderer renderer, GameTime gameTime)
             {
                 float depth = 1.0f - (SortValue / (Map.Columns * Map.Rows)) * 0.5f - _addedIndex * 1.0f / (Map.Columns * Map.Rows) * 0.5f;
-                SpriteBatch.Draw(_whiteTexture, drawRectangle: _rect, color: _color, depth: depth);
+                SpriteBatch.Draw(
+                    _whiteTexture, 
+                    drawRectangle: renderer.AdjustFromVirtual(_rect), 
+                    color: _color, 
+                    depth: depth);
             }
         }
     }

@@ -22,7 +22,7 @@ namespace ProjectZero.GameSystem
         /// <summary>
         /// In tiles.
         /// </summary>
-        public const int Rows = 15;
+        public const int Rows = 13;
 
         public const int TileSize = 32;
 

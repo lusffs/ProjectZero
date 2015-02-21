@@ -72,12 +72,13 @@ namespace ProjectZero.GameSystem.Economy
         {
             for (int i = 0; i < Map.Columns; i++)
             {
-                _renderer.FillRect(new Rectangle(i * Map.TileSize, Map.Rows * Map.TileSize, Map.TileSize, Map.TileSize * Map.TileSize),
+                _renderer.FillRect(new Rectangle(i * Map.TileSize, Map.Rows * Map.TileSize, Map.TileSize, 2 * Map.TileSize),
                     Color.Black, Layer.Map);
             }
 
             for (int i = 0; i < _towers.Length; i++)
-            {                
+            {
+                // TODO:    get size for _towers[i].Price.ToString() and adjust to vitual and include in calculation.
                 _renderer.DrawString(_font, _towers[i].Price.ToString(), new Vector2(i * Map.TileSize + 8, Map.Rows * Map.TileSize), Color.White, Layer.Map, scale: 1f);
                 _towers[i].Update(gameTime);
             }

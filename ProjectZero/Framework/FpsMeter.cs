@@ -65,7 +65,8 @@ namespace ProjectZero.Framework
             if (_fpsIndex > FrameCount)
             {
                 var position = _font.Font.MeasureString(_fpsString);
-                position.X = _renderer.GraphicsDevice.Viewport.Width - position.X;
+                position = _renderer.AdjustToVirtual(position);
+                position.X = Renderer.ScreenWidth - position.X;
                 position.Y = _y;
                 _renderer.DrawString(_font, _fpsString, position, _color, Layer.Last);
             }

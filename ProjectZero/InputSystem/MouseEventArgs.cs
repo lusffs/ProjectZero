@@ -9,8 +9,16 @@ namespace ProjectZero.InputSystem
 {
     public class MouseEventArgs
     {
+        /// <summary>
+        /// In virtual screen coordinates.
+        /// </summary>
+        /// <returns></returns>
         public int X { get; private set; }
 
+        /// <summary>
+        /// In virtual screen coordinates.
+        /// </summary>
+        /// <returns></returns>
         public int Y { get; private set; }
 
         public MouseButton Button { get; private set; }

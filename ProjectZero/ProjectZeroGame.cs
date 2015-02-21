@@ -28,8 +28,9 @@ namespace ProjectZero
         {
             Content.RootDirectory = "Content";
             _renderer = new Renderer(new GraphicsDeviceManager(this), Content);
+
             _soundRenderer = new SoundRenderer(Content);
-            _input = new Input();
+            _input = new Input(_renderer);
             _game = new GameSystem.Game(_renderer, _soundRenderer, _input);
             _fpsMeterFont = _renderer.RegisterFont("fonts/console");            
         }
@@ -45,14 +46,13 @@ namespace ProjectZero
             _game.Initialize();
             base.Initialize();
         }
-
         
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
-        {
+        {            
             _game.RegisterContent();
             // this will actually load content.
             _renderer.LoadContent(GraphicsDevice);

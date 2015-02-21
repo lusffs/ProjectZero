@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using ProjectZero.RenderSystem;
 
 namespace ProjectZero.InputSystem
 {
@@ -18,6 +19,16 @@ namespace ProjectZero.InputSystem
         public event KeyEventHandler KeyEventHandler;
 
         public event MouseEventHandler MouseEventHandler;
+
+        /// <summary>
+        /// need to adjust real screen mouse coordinates to virtual screen coordinates.
+        /// </summary>
+        private readonly Renderer _renderer;
+
+        public Input(Renderer renderer)
+        {
+            _renderer = renderer;
+        }
 
         public void Frame(KeyboardState currentKeyboardState, MouseState currentMouseState)
         {
@@ -38,6 +49,9 @@ namespace ProjectZero.InputSystem
 
         private void ProcessMouseEvent(MouseButton button, ButtonState currentState, ButtonState oldState, int x, int y, int oldX, int oldY)
         {
+            _renderer.AdjustToVirtual(x, y, out x, out y);
+            _renderer.AdjustToVirtual(oldX, oldY, out oldX, out oldY);
+
             if (currentState == ButtonState.Pressed && oldState == ButtonState.Released)
             {
                 OnMouseEvent(new MouseEventArgs(x, y, button, KeyState.Down));                
